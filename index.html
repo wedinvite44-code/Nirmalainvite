@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nirmala Invite — Undangan Digital Elegan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&family=Great+Vibes&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        nirmala: {
+                            white: '#FAFBF7', sage: '#9CAF88', sageLight: '#E8EDE3', sageDark: '#7A8F6A',
+                            gold: '#C9A84C', goldLight: '#F0E6C8', goldDark: '#A88A3A', goldDarker: '#8B6F2E',
+                            charcoal: '#2D2D2D', warm: '#F5F0E8'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                        script: ['Great Vibes', 'cursive']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        .btn-primary { position: relative; overflow: hidden; transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .btn-primary::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent); transition: left 0.6s ease; }
+        .btn-primary:hover::before { left: 100%; }
+        .btn-primary:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 35px -5px rgba(201,168,76,0.4), 0 5px 15px -3px rgba(201,168,76,0.2); }
+        .btn-primary:active { transform: translateY(-1px) scale(0.98); box-shadow: 0 5px 15px -3px rgba(201,168,76,0.3); }
+        .btn-secondary { position: relative; overflow: hidden; transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .btn-secondary::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(156,175,136,0.1), rgba(156,175,136,0.05)); opacity: 0; transition: opacity 0.4s ease; }
+        .btn-secondary:hover::after { opacity: 1; }
+        .btn-secondary:hover { transform: translateY(-3px); border-color: #9CAF88; box-shadow: 0 10px 30px -5px rgba(156,175,136,0.25); }
+        .btn-secondary:active { transform: translateY(-1px) scale(0.98); }
+        .btn-nav { position: relative; transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .btn-nav::after { content: ''; position: absolute; bottom: -2px; left: 50%; width: 0; height: 2px; background: #C9A84C; transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); transform: translateX(-50%); border-radius: 2px; }
+        .btn-nav:hover::after { width: 100%; }
+        .btn-nav:hover { color: #C9A84C; transform: translateY(-1px); }
+        .btn-cta-nav { position: relative; overflow: hidden; transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .btn-cta-nav::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s ease; }
+        .btn-cta-nav:hover::before { left: 100%; }
+        .btn-cta-nav:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 10px 25px -5px rgba(201,168,76,0.35); }
+        .btn-cta-nav:active { transform: translateY(0) scale(0.97); }
+        .btn-card { transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .btn-card:hover { transform: translateY(-8px); box-shadow: 0 25px 50px -12px rgba(156,175,136,0.25); }
+        .btn-card:active { transform: translateY(-4px) scale(0.98); }
+        .btn-link-arrow { transition: all 0.3s ease; }
+        .btn-link-arrow:hover { gap: 12px; color: #A88A3A; }
+        .btn-link-arrow:hover svg { transform: translateX(4px); }
+        .btn-link-arrow svg { transition: transform 0.3s ease; }
+        .btn-pricing { transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .btn-pricing:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -4px rgba(156,175,136,0.3); }
+        .btn-pricing:active { transform: translateY(0) scale(0.98); }
+        .btn-pricing-gold { position: relative; overflow: hidden; transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .btn-pricing-gold::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s ease; }
+        .btn-pricing-gold:hover::before { left: 100%; }
+        .btn-pricing-gold:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(201,168,76,0.4); }
+        .btn-pricing-gold:active { transform: translateY(0) scale(0.98); }
+        .btn-footer { transition: all 0.3s ease; }
+        .btn-footer:hover { background: #C9A84C; transform: translateY(-2px) scale(1.05); }
+        .logo-container { transition: all 0.3s ease; }
+        .logo-container:hover { transform: scale(1.05); }
+        .logo-container:hover .logo-ring { animation: logoPulse 1.5s ease infinite; }
+        @keyframes logoPulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.15); opacity: 0.7; } }
+        .fade-in-up { opacity: 0; transform: translateY(30px); transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .fade-in-up.visible { opacity: 1; transform: translateY(0); }
+        .hero-gradient { background: linear-gradient(135deg, #FAFBF7 0%, #F5F0E8 50%, #E8EDE3 100%); }
+        .leaf-decoration { position: absolute; opacity: 0.08; pointer-events: none; }
+        .leaf-float { animation: float 6s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(3deg); } }
+        .phone-mockup { box-shadow: 0 0 0 12px #2D2D2D, 0 0 0 14px #1a1a1a, 0 25px 60px rgba(0,0,0,0.3); }
+        .ripple { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.4); transform: scale(0); animation: rippleAnim 0.6s ease-out; pointer-events: none; }
+        @keyframes rippleAnim { to { transform: scale(4); opacity: 0; } }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="font-sans bg-nirmala-white text-nirmala-charcoal antialiased">
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-500">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <a href="index.html" class="logo-container flex items-center gap-3 group">
+                    <div class="relative w-10 h-10">
+                        <svg class="w-10 h-10" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle class="logo-ring" cx="24" cy="24" r="22" stroke="#C9A84C" stroke-width="1.5" fill="none" opacity="0.3"/>
+                            <circle cx="24" cy="24" r="18" stroke="#C9A84C" stroke-width="0.8" fill="none" opacity="0.15"/>
+                            <path d="M12 20C12 17.7909 13.7909 16 16 16H32C34.2091 16 36 17.7909 36 20V30C36 32.2091 34.2091 34 32 34H16C13.7909 34 12 32.2091 12 30V20Z" fill="#C9A84C" opacity="0.15"/>
+                            <path d="M12 20C12 17.7909 13.7909 16 16 16H32C34.2091 16 36 17.7909 36 20V30C36 32.2091 34.2091 34 32 34H16C13.7909 34 12 32.2091 12 30V20Z" stroke="#C9A84C" stroke-width="1.2" fill="none"/>
+                            <path d="M12 20L22.5 26.5C23.5 27.2 24.5 27.2 25.5 26.5L36 20" stroke="#C9A84C" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M24 30.5C24 30.5 19 27.5 19 25C19 23.5 20.2 22.3 21.7 22.3C22.7 22.3 23.5 22.9 24 23.6C24.5 22.9 25.3 22.3 26.3 22.3C27.8 22.3 29 23.5 29 25C29 27.5 24 30.5 24 30.5Z" fill="#C9A84C"/>
+                            <path d="M8 24C8 24 6 20 8 16C10 20 8 24 8 24Z" fill="#9CAF88" opacity="0.6"/>
+                            <path d="M40 24C40 24 42 20 40 16C38 20 40 24 40 24Z" fill="#9CAF88" opacity="0.6"/>
+                            <path d="M24 6C24 6 20 8 16 6C20 8 24 6 24 6Z" fill="#9CAF88" opacity="0.4"/>
+                        </svg>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-serif text-xl font-bold text-nirmala-charcoal leading-tight">Nirmala Invite</span>
+                        <span class="text-[9px] text-nirmala-sageDark tracking-[0.2em] uppercase font-medium -mt-0.5">Undangan Digital</span>
+                    </div>
+                </a>
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#fitur" class="btn-nav text-sm font-medium text-gray-600 relative">Fitur</a>
+                    <a href="#tema" class="btn-nav text-sm font-medium text-gray-600 relative">Tema</a>
+                    <a href="#harga" class="btn-nav text-sm font-medium text-gray-600 relative">Harga</a>
+                    <a href="login.html" class="btn-nav text-sm font-medium text-gray-600 relative">Masuk</a>
+                    <a href="register.html" class="btn-cta-nav px-5 py-2.5 bg-nirmala-gold text-white text-sm font-medium rounded-full shadow-lg shadow-nirmala-gold/20">Mulai Sekarang</a>
+                </div>
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-xl hover:bg-gray-100 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-white/95 backdrop-blur-lg border-t border-gray-100">
+            <div class="px-6 py-4 space-y-1">
+                <a href="#fitur" class="block px-4 py-3 text-sm font-medium text-gray-600 hover:bg-nirmala-sageLight hover:text-nirmala-sageDark rounded-xl transition-all">Fitur</a>
+                <a href="#tema" class="block px-4 py-3 text-sm font-medium text-gray-600 hover:bg-nirmala-sageLight hover:text-nirmala-sageDark rounded-xl transition-all">Tema</a>
+                <a href="#harga" class="block px-4 py-3 text-sm font-medium text-gray-600 hover:bg-nirmala-sageLight hover:text-nirmala-sageDark rounded-xl transition-all">Harga</a>
+                <a href="login.html" class="block px-4 py-3 text-sm font-medium text-gray-600 hover:bg-nirmala-sageLight hover:text-nirmala-sageDark rounded-xl transition-all">Masuk</a>
+                <a href="register.html" class="block px-5 py-3 bg-nirmala-gold text-white text-sm font-medium rounded-full text-center shadow-lg shadow-nirmala-gold/20 mt-2">Mulai Sekarang</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen hero-gradient flex items-center overflow-hidden pt-20">
+        <svg class="leaf-decoration leaf-float top-20 left-10 w-32 h-32 text-nirmala-sage" viewBox="0 0 100 100" fill="currentColor"><path d="M50 0C50 0 20 30 20 60C20 85 35 100 50 100C65 100 80 85 80 60C80 30 50 0 50 0Z"/><path d="M50 20C50 20 35 40 35 60C35 75 42 85 50 85C58 85 65 75 65 60C65 40 50 20 50 20Z" fill="#FAFBF7"/></svg>
+        <svg class="leaf-decoration leaf-float top-40 right-20 w-24 h-24 text-nirmala-gold" style="animation-delay: 2s;" viewBox="0 0 100 100" fill="currentColor"><path d="M50 0C50 0 20 30 20 60C20 85 35 100 50 100C65 100 80 85 80 60C80 30 50 0 50 0Z"/><path d="M50 20C50 20 35 40 35 60C35 75 42 85 50 85C58 85 65 75 65 60C65 40 50 20 50 20Z" fill="#FAFBF7"/></svg>
+        <svg class="leaf-decoration leaf-float bottom-20 left-1/4 w-20 h-20 text-nirmala-sageDark" style="animation-delay: 4s;" viewBox="0 0 100 100" fill="currentColor"><path d="M50 0C50 0 20 30 20 60C20 85 35 100 50 100C65 100 80 85 80 60C80 30 50 0 50 0Z"/><path d="M50 20C50 20 35 40 35 60C35 75 42 85 50 85C58 85 65 75 65 60C65 40 50 20 50 20Z" fill="#FAFBF7"/></svg>
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 w-full">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="text-center lg:text-left fade-in-up">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 bg-nirmala-sageLight rounded-full mb-6">
+                        <span class="w-2 h-2 bg-nirmala-sage rounded-full animate-pulse"></span>
+                        <span class="text-xs font-medium text-nirmala-sageDark">Undangan Digital Premium</span>
+                    </div>
+                    <h1 class="font-serif text-5xl md:text-6xl lg:text-7xl font-bold text-nirmala-charcoal leading-tight mb-6">
+                        Suci, Bersih,<br><span class="text-nirmala-gold italic">Tanpa Cacat</span>
+                    </h1>
+                    <p class="text-lg md:text-xl text-gray-600 leading-relaxed mb-8 max-w-xl mx-auto lg:mx-0">
+                        Wujudkan momen istimewamu dengan undangan digital yang elegan dan bermakna. Seperti namanya, Nirmala membawa kesucian dalam setiap detail.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                        <a href="register.html" class="btn-primary relative px-8 py-4 bg-nirmala-gold text-white font-medium rounded-full shadow-xl">Mulai Buat Undangan Indahmu</a>
+                        <a href="#tema" class="btn-secondary relative px-8 py-4 border-2 border-nirmala-sage text-nirmala-sageDark font-medium rounded-full">Lihat Katalog Tema</a>
+                    </div>
+                    <div class="mt-10 flex items-center gap-6 justify-center lg:justify-start">
+                        <div class="text-center"><p class="font-serif text-2xl font-bold text-nirmala-charcoal">2.500+</p><p class="text-xs text-gray-500">Pasangan Bahagia</p></div>
+                        <div class="w-px h-10 bg-gray-300"></div>
+                        <div class="text-center"><p class="font-serif text-2xl font-bold text-nirmala-charcoal">50+</p><p class="text-xs text-gray-500">Tema Eksklusif</p></div>
+                        <div class="w-px h-10 bg-gray-300"></div>
+                        <div class="text-center"><p class="font-serif text-2xl font-bold text-nirmala-charcoal">4.9</p><p class="text-xs text-gray-500">Rating Kepuasan</p></div>
+                    </div>
+                </div>
+                <div class="relative fade-in-up" style="transition-delay: 0.2s;">
+                    <div class="relative mx-auto w-72 md:w-80">
+                        <div class="phone-mockup bg-nirmala-charcoal rounded-[3rem] p-3 relative overflow-hidden">
+                            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-nirmala-charcoal rounded-b-2xl z-10"></div>
+                            <div class="bg-nirmala-warm rounded-[2.5rem] overflow-hidden h-[580px] relative">
+                                <div class="h-full overflow-y-auto scrollbar-hide">
+                                    <div class="p-6 text-center pt-16">
+                                        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-nirmala-sageLight flex items-center justify-center">
+                                            <svg class="w-8 h-8 text-nirmala-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                                        </div>
+                                        <p class="text-xs text-nirmala-sageDark mb-1">The Wedding of</p>
+                                        <h3 class="font-serif text-2xl text-nirmala-charcoal mb-1">Rama & Sinta</h3>
+                                        <p class="text-xs text-gray-500 mb-6">12 Desember 2026</p>
+                                        <div class="bg-white rounded-2xl p-4 shadow-sm mb-4">
+                                            <p class="text-xs text-gray-500 mb-2">Kepada Yth.</p>
+                                            <p class="font-medium text-nirmala-charcoal">Bapak/Ibu Tamu</p>
+                                        </div>
+                                        <button class="btn-primary px-6 py-2 bg-nirmala-gold text-white text-xs rounded-full">Buka Undangan</button>
+                                        <div class="mt-6 space-y-3">
+                                            <div class="bg-white rounded-xl p-3 shadow-sm"><p class="text-xs text-gray-500">Akad Nikah</p><p class="text-sm font-medium">08:00 WIB</p></div>
+                                            <div class="bg-white rounded-xl p-3 shadow-sm"><p class="text-xs text-gray-500">Resepsi</p><p class="text-sm font-medium">11:00 WIB</p></div>
+                                        </div>
+                                        <div class="mt-6 pb-6">
+                                            <div class="flex justify-center gap-2 mb-3">
+                                                <div class="w-10 h-10 rounded-lg bg-nirmala-sageLight flex items-center justify-center"><span class="text-xs font-bold text-nirmala-sage">12</span></div>
+                                                <div class="w-10 h-10 rounded-lg bg-nirmala-sageLight flex items-center justify-center"><span class="text-xs font-bold text-nirmala-sage">:</span></div>
+                                                <div class="w-10 h-10 rounded-lg bg-nirmala-sageLight flex items-center justify-center"><span class="text-xs font-bold text-nirmala-sage">05</span></div>
+                                                <div class="w-10 h-10 rounded-lg bg-nirmala-sageLight flex items-center justify-center"><span class="text-xs font-bold text-nirmala-sage">:</span></div>
+                                                <div class="w-10 h-10 rounded-lg bg-nirmala-sageLight flex items-center justify-center"><span class="text-xs font-bold text-nirmala-sage">42</span></div>
+                                            </div>
+                                            <p class="text-xs text-gray-400">Hari menuju hari bahagia</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="absolute -top-4 -right-4 w-20 h-20 bg-nirmala-gold/10 rounded-full blur-xl"></div>
+                        <div class="absolute -bottom-4 -left-4 w-24 h-24 bg-nirmala-sage/10 rounded-full blur-xl"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Fitur Unggulan -->
+    <section id="fitur" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in-up">
+                <p class="text-nirmala-gold font-medium text-sm tracking-widest uppercase mb-3">Fitur Unggulan</p>
+                <h2 class="font-serif text-4xl md:text-5xl font-bold text-nirmala-charcoal mb-4">Segala yang Kamu Butuhkan</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Setiap fitur dirancang dengan penuh perhatian untuk membuat undangan pernikahanmu sempurna.</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="btn-card bg-nirmala-white rounded-2xl p-8 border border-nirmala-sageLight/50 fade-in-up">
+                    <div class="w-14 h-14 rounded-2xl bg-nirmala-sageLight flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-nirmala-sageDark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <h3 class="font-serif text-xl font-bold text-nirmala-charcoal mb-3">RSVP Real-time</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">Pantau konfirmasi kehadiran tamu secara langsung. Notifikasi instan setiap kali ada yang merespons.</p>
+                </div>
+                <div class="btn-card bg-nirmala-white rounded-2xl p-8 border border-nirmala-sageLight/50 fade-in-up" style="transition-delay: 0.1s;">
+                    <div class="w-14 h-14 rounded-2xl bg-nirmala-goldLight flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-nirmala-goldDark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+                    </div>
+                    <h3 class="font-serif text-xl font-bold text-nirmala-charcoal mb-3">Kustomisasi Tanpa Batas</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">Ubah warna, font, foto, dan setiap detail sesuai keinginanmu. Tidak ada batasan kreativitas.</p>
+                </div>
+                <div class="btn-card bg-nirmala-white rounded-2xl p-8 border border-nirmala-sageLight/50 fade-in-up" style="transition-delay: 0.2s;">
+                    <div class="w-14 h-14 rounded-2xl bg-nirmala-sageLight flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-nirmala-sageDark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <h3 class="font-serif text-xl font-bold text-nirmala-charcoal mb-3">Kado Digital / QRIS</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">Terima hadiah dari tamu melalui transfer digital atau scan QRIS langsung di undanganmu.</p>
+                </div>
+                <div class="btn-card bg-nirmala-white rounded-2xl p-8 border border-nirmala-sageLight/50 fade-in-up" style="transition-delay: 0.3s;">
+                    <div class="w-14 h-14 rounded-2xl bg-nirmala-goldLight flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-nirmala-goldDark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>
+                    </div>
+                    <h3 class="font-serif text-xl font-bold text-nirmala-charcoal mb-3">Musik Latar Eksklusif</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">Pilih dari koleksi musik romantis atau unggah lagu spesial milikmu sendiri.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Katalog Tema -->
+    <section id="tema" class="py-24 bg-nirmala-warm">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in-up">
+                <p class="text-nirmala-gold font-medium text-sm tracking-widest uppercase mb-3">Katalog Tema</p>
+                <h2 class="font-serif text-4xl md:text-5xl font-bold text-nirmala-charcoal mb-4">Pilih Tema Favoritmu</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Setiap tema dirancang dengan estetika tinggi untuk melengkapi kisah cintamu.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="btn-card bg-white rounded-2xl overflow-hidden shadow-sm fade-in-up">
+                    <div class="relative h-64 bg-nirmala-warm overflow-hidden">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-48 h-80 bg-nirmala-charcoal rounded-[2rem] p-2 shadow-xl transform rotate-[-5deg]">
+                                <div class="w-full h-full bg-nirmala-warm rounded-[1.5rem] overflow-hidden p-3">
+                                    <div class="text-center pt-4">
+                                        <div class="w-8 h-8 mx-auto mb-2 rounded-full bg-nirmala-gold/20 flex items-center justify-center">
+                                            <svg class="w-4 h-4 text-nirmala-gold" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                                        </div>
+                                        <p class="text-[8px] text-nirmala-gold">The Wedding of</p>
+                                        <p class="font-serif text-sm font-bold text-nirmala-charcoal">Adi & Dewi</p>
+                                        <div class="mt-2 h-16 bg-nirmala-sage/20 rounded-lg"></div>
+                                        <div class="mt-1 h-8 bg-nirmala-gold/10 rounded-lg"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="px-2 py-1 bg-nirmala-goldLight text-nirmala-goldDark text-xs rounded-md font-medium">Terlaris</span>
+                        </div>
+                        <h3 class="font-serif text-xl font-bold text-nirmala-charcoal mb-2">Nirmala Heritage</h3>
+                        <p class="text-sm text-gray-600 mb-4">Tema tradisional dengan sentuhan batik dan elemen klasik Jawa yang anggun.</p>
+                        <a href="theme-detail.html?tema=heritage" class="btn-link-arrow inline-flex items-center gap-2 text-nirmala-gold font-medium text-sm">
+                            Lihat Live Preview 
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="btn-card bg-white rounded-2xl overflow-hidden shadow-sm fade-in-up" style="transition-delay: 0.15s;">
+                    <div class="relative h-64 bg-gray-50 overflow-hidden">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-48 h-80 bg-nirmala-charcoal rounded-[2rem] p-2 shadow-xl transform rotate-[3deg]">
+                                <div class="w-full h-full bg-white rounded-[1.5rem] overflow-hidden p-3">
+                                    <div class="text-center pt-6">
+                                        <div class="w-12 h-12 mx-auto mb-3 rounded-full border-2 border-nirmala-sage flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-nirmala-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                                        </div>
+                                        <p class="font-serif text-sm font-bold text-nirmala-charcoal">Bima & Rara</p>
+                                        <p class="text-[8px] text-gray-400 mt-1">Modern Minimalist</p>
+                                        <div class="mt-3 mx-2 h-20 bg-gray-50 rounded-lg"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="px-2 py-1 bg-nirmala-sageLight text-nirmala-sageDark text-xs rounded-md font-medium">Baru</span>
+                        </div>
+                        <h3 class="font-serif text-xl font-bold text-nirmala-charcoal mb-2">Nirmala Serenity</h3>
+                        <p class="text-sm text-gray-600 mb-4">Desain minimalis bersih dengan fokus pada tipografi elegan dan ruang putih.</p>
+                        <a href="theme-detail.html?tema=serenity" class="btn-link-arrow inline-flex items-center gap-2 text-nirmala-gold font-medium text-sm">
+                            Lihat Live Preview 
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="btn-card bg-white rounded-2xl overflow-hidden shadow-sm fade-in-up" style="transition-delay: 0.3s;">
+                    <div class="relative h-64 bg-nirmala-sageLight/30 overflow-hidden">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-48 h-80 bg-nirmala-charcoal rounded-[2rem] p-2 shadow-xl transform rotate-[-2deg]">
+                                <div class="w-full h-full bg-nirmala-warm rounded-[1.5rem] overflow-hidden p-3">
+                                    <div class="text-center pt-5">
+                                        <div class="flex justify-center gap-1 mb-2">
+                                            <svg class="w-4 h-4 text-nirmala-sage" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
+                                            <svg class="w-4 h-4 text-nirmala-gold" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
+                                            <svg class="w-4 h-4 text-nirmala-sage" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
+                                        </div>
+                                        <p class="font-serif text-sm font-bold text-nirmala-charcoal">Bayu & Sari</p>
+                                        <p class="text-[8px] text-nirmala-sageDark">Rustic Garden</p>
+                                        <div class="mt-2 mx-2 h-16 bg-nirmala-sage/10 rounded-lg flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-nirmala-sage/40" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
+                                        </div>
+                                        <div class="mt-1 h-6 bg-nirmala-gold/10 rounded-lg"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-serif text-xl font-bold text-nirmala-charcoal mb-2">Nirmala Garden</h3>
+                        <p class="text-sm text-gray-600 mb-4">Nuansa rustic dengan elemen alam, dedaunan, dan tekstur kayu yang hangat.</p>
+                        <a href="theme-detail.html?tema=garden" class="btn-link-arrow inline-flex items-center gap-2 text-nirmala-gold font-medium text-sm">
+                            Lihat Live Preview 
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Paket Harga -->
+    <section id="harga" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in-up">
+                <p class="text-nirmala-gold font-medium text-sm tracking-widest uppercase mb-3">Investasi Cinta</p>
+                <h2 class="font-serif text-4xl md:text-5xl font-bold text-nirmala-charcoal mb-4">Pilih Paket Terbaikmu</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Transparan, tanpa biaya tersembunyi. Pilih yang paling sesuai dengan kebutuhanmu.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="btn-card bg-nirmala-white rounded-2xl p-8 border border-nirmala-sageLight/50 fade-in-up">
+                    <div class="text-center mb-6">
+                        <h3 class="font-serif text-2xl font-bold text-nirmala-charcoal mb-2">Paket Sahabat</h3>
+                        <p class="text-sm text-gray-500 mb-4">Untuk perayaan intimate</p>
+                        <div class="flex items-baseline justify-center gap-1">
+                            <span class="text-lg text-gray-400">Rp</span>
+                            <span class="font-serif text-4xl font-bold text-nirmala-charcoal">299</span>
+                            <span class="text-lg text-gray-400">rb</span>
+                        </div>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center gap-3 text-sm text-gray-600"><svg class="w-5 h-5 text-nirmala-sage flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>1 Tema Pilihan</li>
+                        <li class="flex items-center gap-3 text-sm text-gray-600"><svg class="w-5 h-5 text-nirmala-sage flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>RSVP Basic</li>
+                        <li class="flex items-center gap-3 text-sm text-gray-600"><svg class="w-5 h-5 text-nirmala-sage flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Galeri 6 Foto</li>
+                        <li class="flex items-center gap-3 text-sm text-gray-600"><svg class="w-5 h-5 text-nirmala-sage flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Musik Latar</li>
+                        <li class="flex items-center gap-3 text-sm text-gray-400"><svg class="w-5 h-5 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>Kado Digital</li>
+                    </ul>
+                    <button class="btn-pricing w-full py-3 border-2 border-nirmala-sage text-nirmala-sageDark font-medium rounded-full">Pilih Paket</button>
+                </div>
+                <div class="btn-card bg-nirmala-charcoal rounded-2xl p-8 relative overflow-hidden fade-in-up" style="transition-delay: 0.15s;">
+                    <div class="absolute top-0 right-0 bg-nirmala-gold text-white text-xs font-bold px-4 py-1 rounded-bl-xl">POPULER</div>
+                    <div class="text-center mb-6">
+                        <h3 class="font-serif text-2xl font-bold text-white mb-2">Paket Nirmala</h3>
+                        <p class="text-sm text-gray-400 mb-4">Pilihan terbaik pasangan</p>
+                        <div class="flex items-baseline justify-center gap-1">
+                            <span class="text-lg text-gray-400">Rp</span>
+                            <span class="font-serif text-4xl font-bold text-nirmala-gold">499</span>
+                            <span class="text-lg text-gray-400">rb</span>
+                        </div>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center gap-3 text-sm text-gray-300"><svg class="w-5 h-5 text-nirmala-gold flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Semua Tema Premium</li>
+                        <li class="flex items-center gap-3 text-sm text-gray-300"><svg class="w-5 h-5 text-nirmala-gold flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>RSVP + Manajemen Tamu</li>
+                        <li class="flex items-center gap-3 text-sm text-gray-300"><svg class="w-5 h-5 text-nirmala-gold flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Galeri 12 Foto</li>
+                        <li class="flex items-center gap-3 text-sm text-gray-300"><svg class="w-5 h-5 text-nirmala-gold flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Musik Custom</li>
+                        <li class="flex items-center gap-3 text-sm text-gray-300"><svg class="w-5 h-5 text-nirmala-gold flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Kado Digital / QRIS</li>
+                    </ul>
+                    <button class="btn-pricing-gold w-full py-3 bg-nirmala-gold text-white font-medium rounded-full shadow-lg shadow-nirmala-gold/20">Pilih Paket</button>
+                </div>
+                <div class="btn-card bg-nirmala-white rounded-2xl p-8 border border-nirmala-sageLight/50 fade-in-up" style="transition-delay: 0.3s;">
+                    <div class="text-center mb-6">
+                        <h3 class="font-serif text-2xl font-bold text-nirmala-charcoal mb-2">Paket Mahkota</h3>
+                        <p class="text-sm text-gray-500 mb-4">Eksklusif & lengkap</p>
+                        <div class="flex items-baseline justify-center gap-1">
+                            <span class="text-lg text-gray-400">Rp</span>
+                            <span class="font-serif text-4xl font-bold text-nirmala-charcoal">899</span>
+                            <span class="text-lg text-gray-400">rb</span>
+                        </div>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center gap-3 text-sm text-gray-600"><svg class="w-5 h-5 text-nirmala-sage flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Semua Fitur Nirmala</li>
+                        <li class="flex items-center gap-3 text-sm text-gray-600"><svg class="w-5 h-5 text-nirmala-sage flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Video Pre-wedding</li>
+                        <li class="flex items-center gap-3 text-sm text-gray-600"><svg class="w-5 h-5 text-nirmala-sage flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Galeri Unlimited</li>
+                        <li class="flex items-center gap-3 text-sm text-gray-600"><svg class="w-5 h-5 text-nirmala-sage flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Support Prioritas</li>
+                        <li class="flex items-center gap-3 text-sm text-gray-600"><svg class="w-5 h-5 text-nirmala-sage flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Custom Domain</li>
+                    </ul>
+                    <button class="btn-pricing w-full py-3 border-2 border-nirmala-sage text-nirmala-sageDark font-medium rounded-full">Pilih Paket</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-24 bg-nirmala-warm relative overflow-hidden">
+        <svg class="leaf-decoration top-10 left-10 w-40 h-40 text-nirmala-sage" viewBox="0 0 100 100" fill="currentColor"><path d="M50 0C50 0 20 30 20 60C20 85 35 100 50 100C65 100 80 85 80 60C80 30 50 0 50 0Z"/></svg>
+        <svg class="leaf-decoration bottom-10 right-10 w-32 h-32 text-nirmala-gold" viewBox="0 0 100 100" fill="currentColor"><path d="M50 0C50 0 20 30 20 60C20 85 35 100 50 100C65 100 80 85 80 60C80 30 50 0 50 0Z"/></svg>
+        <div class="max-w-3xl mx-auto px-6 text-center relative z-10 fade-in-up">
+            <h2 class="font-serif text-4xl md:text-5xl font-bold text-nirmala-charcoal mb-6">Mulai Kisah Indahmu Hari Ini</h2>
+            <p class="text-lg text-gray-600 mb-8">Jangan tunda momen istimewamu. Buat undangan digital yang akan dikenang selamanya.</p>
+            <a href="register.html" class="btn-primary inline-block px-10 py-4 bg-nirmala-gold text-white font-medium rounded-full shadow-xl">
+                Buat Undangan Gratis — Tanpa Kartu Kredit
+            </a>
+            <p class="mt-4 text-sm text-gray-500">Setelah puas, baru bayar untuk publish. Tanpa risiko.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-nirmala-charcoal text-white py-16">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 mb-12">
+                <div class="md:col-span-2">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="relative w-10 h-10">
+                            <svg class="w-10 h-10" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="24" cy="24" r="22" stroke="#C9A84C" stroke-width="1.5" fill="none" opacity="0.3"/>
+                                <circle cx="24" cy="24" r="18" stroke="#C9A84C" stroke-width="0.8" fill="none" opacity="0.15"/>
+                                <path d="M12 20C12 17.7909 13.7909 16 16 16H32C34.2091 16 36 17.7909 36 20V30C36 32.2091 34.2091 34 32 34H16C13.7909 34 12 32.2091 12 30V20Z" fill="#C9A84C" opacity="0.15"/>
+                                <path d="M12 20C12 17.7909 13.7909 16 16 16H32C34.2091 16 36 17.7909 36 20V30C36 32.2091 34.2091 34 32 34H16C13.7909 34 12 32.2091 12 30V20Z" stroke="#C9A84C" stroke-width="1.2" fill="none"/>
+                                <path d="M12 20L22.5 26.5C23.5 27.2 24.5 27.2 25.5 26.5L36 20" stroke="#C9A84C" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M24 30.5C24 30.5 19 27.5 19 25C19 23.5 20.2 22.3 21.7 22.3C22.7 22.3 23.5 22.9 24 23.6C24.5 22.9 25.3 22.3 26.3 22.3C27.8 22.3 29 23.5 29 25C29 27.5 24 30.5 24 30.5Z" fill="#C9A84C"/>
+                                <path d="M8 24C8 24 6 20 8 16C10 20 8 24 8 24Z" fill="#9CAF88" opacity="0.6"/>
+                                <path d="M40 24C40 24 42 20 40 16C38 20 40 24 40 24Z" fill="#9CAF88" opacity="0.6"/>
+                                <path d="M24 6C24 6 20 8 16 6C20 8 24 6 24 6Z" fill="#9CAF88" opacity="0.4"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="font-serif text-xl font-bold">Nirmala Invite</span>
+                            <span class="block text-[9px] text-nirmala-sage tracking-[0.2em] uppercase -mt-0.5">Undangan Digital</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed max-w-sm">Undangan digital premium untuk momen paling berharga dalam hidupmu. Suci, bersih, dan tanpa cacat.</p>
+                </div>
+                <div>
+                    <h4 class="font-medium mb-4">Produk</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="theme-detail.html" class="hover:text-nirmala-gold transition-colors">Katalog Tema</a></li>
+                        <li><a href="#fitur" class="hover:text-nirmala-gold transition-colors">Fitur</a></li>
+                        <li><a href="#harga" class="hover:text-nirmala-gold transition-colors">Harga</a></li>
+                        <li><a href="theme-detail.html" class="hover:text-nirmala-gold transition-colors">Demo</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-medium mb-4">Dukungan</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-nirmala-gold transition-colors">Pusat Bantuan</a></li>
+                        <li><a href="#" class="hover:text-nirmala-gold transition-colors">Tutorial</a></li>
+                        <li><a href="#" class="hover:text-nirmala-gold transition-colors">Kontak Kami</a></li>
+                        <li><a href="#" class="hover:text-nirmala-gold transition-colors">FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-sm text-gray-500">&copy; 2026 Nirmala Invite. Seluruh hak cipta dilindungi.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="btn-footer w-9 h-9 rounded-full bg-gray-700 flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+                    </a>
+                    <a href="#" class="btn-footer w-9 h-9 rounded-full bg-gray-700 flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-white/90', 'backdrop-blur-lg', 'shadow-sm');
+            } else {
+                navbar.classList.remove('bg-white/90', 'backdrop-blur-lg', 'shadow-sm');
+            }
+        });
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Ripple effect on primary buttons
+        document.querySelectorAll('.btn-primary, .btn-pricing-gold').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                const rect = this.getBoundingClientRect();
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple';
+                const size = Math.max(rect.width, rect.height);
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
+                ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // Intersection Observer for scroll animations
+        const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>

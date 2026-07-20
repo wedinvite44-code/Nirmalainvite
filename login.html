@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk — Nirmala Invite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        nirmala: {
+                            white: '#FAFBF7',
+                            sage: '#9CAF88',
+                            sageLight: '#E8EDE3',
+                            sageDark: '#7A8F6A',
+                            gold: '#C9A84C',
+                            goldLight: '#F0E6C8',
+                            goldDark: '#A88A3A',
+                            charcoal: '#2D2D2D',
+                            warm: '#F5F0E8'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .fade-in { animation: fadeIn 0.6s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .input-group:focus-within label { color: #7A8F6A; }
+        .input-group:focus-within input { border-color: #9CAF88; box-shadow: 0 0 0 3px rgba(156,175,136,0.15); }
+        .leaf-bg { position: absolute; opacity: 0.04; pointer-events: none; }
+        .google-btn { transition: all 0.2s ease; border: 1px solid #e5e7eb; }
+        .google-btn:hover { background: #f9fafb; border-color: #d1d5db; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #e5e7eb; }
+    </style>
+</head>
+<body class="font-sans bg-nirmala-white text-nirmala-charcoal antialiased min-h-screen flex">
+
+    <!-- Left Panel: Visual -->
+    <div class="hidden lg:flex lg:w-1/2 bg-nirmala-warm relative overflow-hidden items-center justify-center">
+        <svg class="leaf-bg top-10 left-10 w-48 h-48 text-nirmala-sage" viewBox="0 0 100 100" fill="currentColor"><path d="M50 0C50 0 20 30 20 60C20 85 35 100 50 100C65 100 80 85 80 60C80 30 50 0 50 0Z"/></svg>
+        <svg class="leaf-bg bottom-20 right-10 w-40 h-40 text-nirmala-gold" viewBox="0 0 100 100" fill="currentColor"><path d="M50 0C50 0 20 30 20 60C20 85 35 100 50 100C65 100 80 85 80 60C80 30 50 0 50 0Z"/></svg>
+
+        <div class="text-center px-12 relative z-10">
+            <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-nirmala-gold/10 flex items-center justify-center">
+                <svg class="w-10 h-10 text-nirmala-gold" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </div>
+            <h2 class="font-serif text-4xl font-bold text-nirmala-charcoal mb-4">Selamat Datang Kembali</h2>
+            <p class="text-gray-600 leading-relaxed max-w-sm mx-auto">Masuk untuk melanjutkan perjalanan membuat undangan digital terindahmu bersama Nirmala Invite.</p>
+
+            <div class="mt-10 flex items-center justify-center gap-4">
+                <div class="text-center">
+                    <p class="font-serif text-2xl font-bold text-nirmala-charcoal">2.500+</p>
+                    <p class="text-xs text-gray-500">Pasangan Bahagia</p>
+                </div>
+                <div class="w-px h-10 bg-gray-300"></div>
+                <div class="text-center">
+                    <p class="font-serif text-2xl font-bold text-nirmala-charcoal">4.9</p>
+                    <p class="text-xs text-gray-500">Rating Kepuasan</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Panel: Form -->
+    <div class="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12">
+        <div class="w-full max-w-md fade-in">
+            <!-- Logo -->
+            <div class="text-center mb-8 lg:hidden">
+                <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-nirmala-gold flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
+                </div>
+                <h1 class="font-serif text-2xl font-bold text-nirmala-charcoal">Nirmala Invite</h1>
+            </div>
+
+            <div class="text-center mb-8">
+                <h2 class="font-serif text-3xl font-bold text-nirmala-charcoal mb-2">Masuk ke Akunmu</h2>
+                <p class="text-sm text-gray-500">Belum punya akun? <a href="register.html" class="text-nirmala-gold font-medium hover:underline">Daftar gratis</a></p>
+            </div>
+
+            <!-- Google Sign In -->
+            <div id="g_id_onload"
+                data-client_id="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
+                data-context="signin"
+                data-ux_mode="popup"
+                data-login_uri=""
+                data-auto_prompt="false">
+            </div>
+
+            <div class="g_id_signin w-full mb-4"
+                data-type="standard"
+                data-shape="rectangular"
+                data-theme="outline"
+                data-text="signin_with"
+                data-size="large"
+                data-logo_alignment="center"
+                data-width="400">
+            </div>
+
+            <!-- Fallback Google Button (if GIS not loaded) -->
+            <button onclick="handleGoogleSignIn()" class="google-btn w-full flex items-center justify-center gap-3 px-4 py-3 bg-white rounded-xl text-sm font-medium text-gray-700 mb-6">
+                <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                Masuk dengan Google
+            </button>
+
+            <div class="divider flex items-center gap-4 mb-6">
+                <span class="text-xs text-gray-400 whitespace-nowrap">atau masuk dengan email</span>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="space-y-5">
+                <div class="input-group">
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Alamat Email</label>
+                    <input type="email" id="email" placeholder="nama@email.com" 
+                        class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm transition-all outline-none"
+                        required>
+                </div>
+
+                <div class="input-group">
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Kata Sandi</label>
+                    <div class="relative">
+                        <input type="password" id="password" placeholder="••••••••" 
+                            class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-sm transition-all outline-none pr-12"
+                            required>
+                        <button type="button" onclick="togglePassword('password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                            <svg class="w-5 h-5 eye-open" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            <svg class="w-5 h-5 eye-closed hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-nirmala-sage focus:ring-nirmala-sage">
+                        <span class="text-sm text-gray-600">Ingat saya</span>
+                    </label>
+                    <a href="#" class="text-sm text-nirmala-gold hover:underline">Lupa kata sandi?</a>
+                </div>
+
+                <button type="submit" class="w-full py-3.5 bg-nirmala-gold text-white font-medium rounded-xl hover:bg-nirmala-goldDark transition-all shadow-lg shadow-nirmala-gold/20 hover:shadow-xl transform hover:-translate-y-0.5">
+                    Masuk
+                </button>
+            </form>
+
+            <p class="text-center text-xs text-gray-400 mt-6">
+                Dengan masuk, kamu menyetujui <a href="#" class="text-nirmala-gold hover:underline">Syarat & Ketentuan</a> dan <a href="#" class="text-nirmala-gold hover:underline">Kebijakan Privasi</a> kami.
+            </p>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-nirmala-charcoal text-white px-6 py-3 rounded-xl shadow-xl transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-3">
+        <svg class="w-5 h-5 text-nirmala-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        <span id="toast-message">Berhasil masuk!</span>
+    </div>
+
+    <script>
+        // Toggle password visibility
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const eyeOpen = btn.querySelector('.eye-open');
+            const eyeClosed = btn.querySelector('.eye-closed');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                eyeOpen.classList.add('hidden');
+                eyeClosed.classList.remove('hidden');
+            } else {
+                input.type = 'password';
+                eyeOpen.classList.remove('hidden');
+                eyeClosed.classList.add('hidden');
+            }
+        }
+
+        // Google Sign In handler
+        function handleGoogleSignIn() {
+            // In production, this triggers Google OAuth popup
+            // For demo, simulate successful login
+            showToast('Masuk dengan Google berhasil! Mengalihkan...');
+            setTimeout(() => {
+                window.location.href = 'dashboard-form.html';
+            }, 1500);
+        }
+
+        // Handle Google credential response
+        function handleCredentialResponse(response) {
+            // Decode JWT token from Google
+            const data = parseJwt(response.credential);
+            console.log('Google User:', data);
+            showToast(`Selamat datang, ${data.given_name || data.name}!`);
+            setTimeout(() => {
+                window.location.href = 'dashboard-form.html';
+            }, 1500);
+        }
+
+        function parseJwt(token) {
+            const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+            const json = decodeURIComponent(atob(base64).split('').map(c => 
+                '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+            return JSON.parse(json);
+        }
+
+        // Configure Google Sign-In
+        window.onload = function() {
+            if (typeof google !== 'undefined') {
+                google.accounts.id.initialize({
+                    client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
+                    callback: handleCredentialResponse,
+                    auto_select: false,
+                    cancel_on_tap_outside: true
+                });
+                google.accounts.id.renderButton(
+                    document.querySelector('.g_id_signin'),
+                    { theme: 'outline', size: 'large', width: '100%', text: 'signin_with', shape: 'rectangular' }
+                );
+            }
+        };
+
+        // Form submission
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (email && password.length >= 6) {
+                showToast('Berhasil masuk! Mengalihkan ke dashboard...');
+                setTimeout(() => {
+                    window.location.href = 'dashboard-form.html';
+                }, 1500);
+            } else {
+                showToast('Email atau kata sandi tidak valid.', true);
+            }
+        });
+
+        // Toast notification
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            toastMsg.textContent = message;
+
+            if (isError) {
+                toast.classList.remove('bg-nirmala-charcoal');
+                toast.classList.add('bg-red-600');
+            } else {
+                toast.classList.remove('bg-red-600');
+                toast.classList.add('bg-nirmala-charcoal');
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

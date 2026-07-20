@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Dashboard — Buku Tamu & RSVP | Nirmala Invite</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        nirmala: {
+          white: '#FAFBF7', sage: '#9CAF88', sageLight: '#E8EDE3', sageDark: '#7A8F6A',
+          gold: '#C9A84C', goldLight: '#F0E6C8', goldDark: '#A88A3A',
+          charcoal: '#2D2D2D', warm: '#F5F0E8'
+        }
+      },
+      fontFamily: { serif: ['Playfair Display','serif'], sans: ['Inter','sans-serif'] }
+    }
+  }
+}
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{max-width:100vw;overflow-x:hidden;margin:0;padding:0;touch-action:pan-y}
+body{font-family:'Inter',sans-serif;background:#FAFBF7;color:#2D2D2D}
+.hide-scrollbar::-webkit-scrollbar{display:none}
+.hide-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
+table{width:100%;border-collapse:collapse}
+th,td{padding:12px 8px;text-align:left;white-space:nowrap}
+@media(max-width:640px){th,td{padding:10px 6px;font-size:12px}}
+.badge-hadir{background:#E8F5E9;color:#2E7D32}
+.badge-tidak{background:#FFEBEE;color:#C62828}
+.badge-ragu{background:#FFF8E1;color:#F57F17}
+.fade-in{animation:fadeIn .35s ease}@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:#2D2D2D;color:#fff;padding:12px 24px;border-radius:12px;font-size:13px;opacity:0;transition:all .3s ease;z-index:100;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:50;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-bg.open{display:flex}
+.dropdown-menu{position:absolute;right:0;top:100%;background:#fff;border:1px solid #eee;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.1);min-width:140px;z-index:20;display:none;overflow:hidden}
+.dropdown-menu.open{display:block}
+</style>
+</head>
+<body class="overflow-x-hidden">
+
+<!-- Toast -->
+<div id="toast" class="toast">Pesan</div>
+
+<!-- Modal Tambah Tamu -->
+<div id="modal-tambah" class="modal-bg" onclick="if(event.target===this)closeModal()">
+  <div class="bg-white rounded-2xl p-6 w-full max-w-sm fade-in">
+    <h3 class="font-serif text-xl font-bold mb-4">Tambah Tamu</h3>
+    <div class="space-y-3">
+      <input id="inp-nama" type="text" placeholder="Nama tamu" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage">
+      <input id="inp-hp" type="text" placeholder="No. HP (opsional)" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage">
+      <select id="inp-kategori" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage">
+        <option value="Keluarga">Keluarga</option>
+        <option value="Teman">Teman</option>
+        <option value="Rekan Kerja">Rekan Kerja</option>
+      </select>
+      <select id="inp-status" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage">
+        <option value="hadir">Hadir</option>
+        <option value="tidak">Tidak Hadir</option>
+        <option value="ragu">Ragu-ragu</option>
+      </select>
+    </div>
+    <div class="flex gap-2 mt-5">
+      <button onclick="closeModal()" class="flex-1 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50">Batal</button>
+      <button onclick="simpanTamu()" class="flex-1 py-2.5 bg-nirmala-gold text-white rounded-xl text-sm font-medium hover:bg-nirmala-goldDark">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Edit Tamu -->
+<div id="modal-edit" class="modal-bg" onclick="if(event.target===this)closeEditModal()">
+  <div class="bg-white rounded-2xl p-6 w-full max-w-sm fade-in">
+    <h3 class="font-serif text-xl font-bold mb-4">Edit Tamu</h3>
+    <div class="space-y-3">
+      <input id="edit-nama" type="text" placeholder="Nama tamu" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage">
+      <input id="edit-hp" type="text" placeholder="No. HP" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage">
+      <select id="edit-kategori" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage">
+        <option value="Keluarga">Keluarga</option>
+        <option value="Teman">Teman</option>
+        <option value="Rekan Kerja">Rekan Kerja</option>
+      </select>
+      <select id="edit-status" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage">
+        <option value="hadir">Hadir</option>
+        <option value="tidak">Tidak Hadir</option>
+        <option value="ragu">Ragu-ragu</option>
+      </select>
+    </div>
+    <div class="flex gap-2 mt-5">
+      <button onclick="closeEditModal()" class="flex-1 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50">Batal</button>
+      <button onclick="updateTamu()" class="flex-1 py-2.5 bg-nirmala-gold text-white rounded-xl text-sm font-medium hover:bg-nirmala-goldDark">Update</button>
+    </div>
+  </div>
+</div>
+
+<!-- Layout -->
+<div class="flex min-h-screen w-full">
+
+<!-- Sidebar desktop -->
+<aside class="w-64 bg-white border-r border-gray-100 hidden lg:flex flex-col fixed h-full z-20">
+  <div class="p-6 border-b border-gray-100 flex items-center gap-2">
+    <div class="w-8 h-8 rounded-full bg-nirmala-gold flex items-center justify-center">
+      <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
+    </div>
+    <span class="font-serif font-bold">Nirmala Invite</span>
+  </div>
+  <nav class="flex-1 p-4 space-y-1">
+    <a href="dashboard-form.html" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-xl text-sm font-medium transition-colors">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+      Isi Data Undangan
+    </a>
+    <a href="#" class="flex items-center gap-3 px-4 py-3 bg-nirmala-sageLight text-nirmala-sageDark rounded-xl text-sm font-medium">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Buku Tamu & RSVP
+    </a>
+    <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-xl text-sm font-medium transition-colors">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+      Galeri & Media
+    </a>
+    <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-xl text-sm font-medium transition-colors">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg>
+      Pengaturan
+    </a>
+  </nav>
+  <div class="p-4 border-t border-gray-100">
+    <div class="flex items-center gap-3 px-4 py-3">
+      <div class="w-9 h-9 rounded-full bg-nirmala-sage flex items-center justify-center text-white text-sm font-bold">AR</div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-medium truncate">Ayu & Raka</p>
+        <p class="text-xs text-gray-400">Paket Nirmala</p>
+      </div>
+      <a href="login.html" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors" title="Keluar">
+        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+      </a>
+    </div>
+  </div>
+</aside>
+
+<!-- Main -->
+<main class="flex-1 lg:ml-64 w-full min-w-0">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-gray-100 px-4 sm:px-6 py-4 sticky top-0 z-10">
+    <div class="flex items-center justify-between gap-3">
+      <div class="min-w-0">
+        <h1 class="font-serif text-lg sm:text-xl font-bold truncate">Buku Tamu & RSVP</h1>
+        <p class="text-[11px] sm:text-xs text-gray-400 truncate">Kelola daftar tamu dan pantau konfirmasi</p>
+      </div>
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <button class="text-xs sm:text-sm text-gray-600 hover:text-nirmala-charcoal px-2 py-1">Bantuan</button>
+        <div class="w-8 h-8 rounded-full bg-nirmala-sage flex items-center justify-center text-white text-xs font-bold lg:hidden">AR</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-6xl mx-auto px-3 sm:px-4 py-6 w-full">
+
+    <!-- Stat Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 mb-6 w-full">
+      <div class="bg-white rounded-2xl p-3 sm:p-5 border border-gray-100">
+        <div class="flex items-center justify-between mb-2 gap-1">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-nirmala-sageLight flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-nirmala-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          </div>
+          <span class="text-[10px] sm:text-xs text-gray-400 truncate">Total</span>
+        </div>
+        <p class="font-serif text-xl sm:text-2xl font-bold truncate" id="st-total">248</p>
+        <p class="text-[10px] sm:text-xs text-gray-500 mt-0.5 truncate">Undangan</p>
+      </div>
+      <div class="bg-white rounded-2xl p-3 sm:p-5 border border-gray-100">
+        <div class="flex items-center justify-between mb-2 gap-1">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-green-50 flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <span class="text-[10px] sm:text-xs text-green-600 font-medium truncate">+12 hari ini</span>
+        </div>
+        <p class="font-serif text-xl sm:text-2xl font-bold text-green-700 truncate" id="st-hadir">186</p>
+        <p class="text-[10px] sm:text-xs text-gray-500 mt-0.5 truncate">Konfirmasi Hadir</p>
+      </div>
+      <div class="bg-white rounded-2xl p-3 sm:p-5 border border-gray-100">
+        <div class="flex items-center justify-between mb-2 gap-1">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-red-50 flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <span class="text-[10px] sm:text-xs text-gray-400 truncate">Total</span>
+        </div>
+        <p class="font-serif text-xl sm:text-2xl font-bold text-red-600 truncate" id="st-tidak">32</p>
+        <p class="text-[10px] sm:text-xs text-gray-500 mt-0.5 truncate">Tidak Hadir</p>
+      </div>
+      <div class="bg-white rounded-2xl p-3 sm:p-5 border border-gray-100">
+        <div class="flex items-center justify-between mb-2 gap-1">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-yellow-50 flex items-center justify-center flex-shrink-0">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <span class="text-[10px] sm:text-xs text-gray-400 truncate">Menunggu</span>
+        </div>
+        <p class="font-serif text-xl sm:text-2xl font-bold text-yellow-600 truncate" id="st-menunggu">30</p>
+        <p class="text-[10px] sm:text-xs text-gray-500 mt-0.5 truncate">Belum Respons</p>
+      </div>
+    </div>
+
+    <!-- WhatsApp Generator -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6 lg:p-8 mb-6 w-full overflow-hidden">
+      <div class="flex items-start gap-3 sm:gap-4 mb-4 sm:mb-6">
+        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-green-50 flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6 text-green-600" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </div>
+        <div class="min-w-0">
+          <h3 class="font-serif text-base sm:text-lg font-bold truncate">Generator Link WhatsApp</h3>
+          <p class="text-xs sm:text-sm text-gray-500 leading-relaxed">Ketik nama tamu untuk membuat tautan undangan personal via WhatsApp.</p>
+        </div>
+      </div>
+
+      <div class="bg-nirmala-warm rounded-xl p-4 sm:p-5">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 mb-4 w-full">
+          <div class="md:col-span-1">
+            <label class="block text-xs font-medium text-gray-600 mb-1.5">Nama Tamu</label>
+            <input type="text" id="wa-name" placeholder="Contoh: Budi Santoso" class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage focus:ring-2 focus:ring-nirmala-sage/20">
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-xs font-medium text-gray-600 mb-1.5">Link yang Dihasilkan</label>
+            <div class="flex gap-2 w-full">
+              <div class="flex-1 relative min-w-0">
+                <input type="text" id="wa-link" readonly value="https://nirmalainvite.com/ayu-raka?to=" class="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm text-gray-500 pr-20 truncate">
+                <button onclick="copyLink()" class="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">Copy</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-3 w-full">
+          <button onclick="generateLink()" class="px-5 py-2.5 bg-nirmala-charcoal text-white text-sm font-medium rounded-xl hover:bg-nirmala-charcoal/90 transition-all text-center">Generate Link</button>
+          <a id="wa-send-btn" href="#" target="_blank" class="px-5 py-2.5 text-white text-sm font-medium rounded-xl transition-all flex items-center justify-center gap-2 opacity-50 pointer-events-none text-center" style="background:linear-gradient(135deg,#25D366,#128C7E)">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Kirim via WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Guest Table -->
+    <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden w-full">
+      <div class="p-4 sm:p-6 lg:p-8 border-b border-gray-100">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="min-w-0">
+            <h3 class="font-serif text-base sm:text-lg font-bold truncate">Daftar Tamu</h3>
+            <p class="text-[11px] sm:text-xs text-gray-400 mt-0.5 truncate">Kelola dan pantau status kehadiran tamu</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <div class="relative flex-1 sm:flex-none">
+              <svg class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              <input type="text" id="search-guest" oninput="filterGuests()" placeholder="Cari tamu..." class="pl-9 pr-4 py-2 bg-nirmala-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage focus:ring-2 focus:ring-nirmala-sage/20 w-full sm:w-48">
+            </div>
+            <button onclick="openModal()" class="px-4 py-2 bg-nirmala-sage text-white text-sm rounded-xl hover:bg-nirmala-sageDark transition-all flex items-center gap-2 flex-shrink-0">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+              <span class="hidden sm:inline">Tambah Tamu</span>
+              <span class="sm:hidden">Tambah</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Tabs -->
+      <div class="px-4 sm:px-6 lg:px-8 pt-4 flex flex-wrap gap-2">
+        <button onclick="setFilter('all')" class="filter-btn px-4 py-1.5 bg-nirmala-charcoal text-white text-xs rounded-full whitespace-nowrap" data-filter="all">Semua</button>
+        <button onclick="setFilter('hadir')" class="filter-btn px-4 py-1.5 bg-nirmala-sageLight text-nirmala-sageDark text-xs rounded-full whitespace-nowrap hover:bg-nirmala-sage/20 transition-colors" data-filter="hadir">Hadir</button>
+        <button onclick="setFilter('tidak')" class="filter-btn px-4 py-1.5 bg-red-50 text-red-600 text-xs rounded-full whitespace-nowrap hover:bg-red-100 transition-colors" data-filter="tidak">Tidak Hadir</button>
+        <button onclick="setFilter('ragu')" class="filter-btn px-4 py-1.5 bg-yellow-50 text-yellow-600 text-xs rounded-full whitespace-nowrap hover:bg-yellow-100 transition-colors" data-filter="ragu">Ragu-ragu</button>
+      </div>
+
+      <!-- Table -->
+      <div class="overflow-x-auto" style="max-width:100%">
+        <table class="w-full">
+          <thead>
+            <tr class="text-left border-b border-gray-100">
+              <th class="pb-3 text-[10px] sm:text-xs font-medium text-gray-400 uppercase tracking-wider pl-4 sm:pl-6">Tamu</th>
+              <th class="pb-3 text-[10px] sm:text-xs font-medium text-gray-400 uppercase tracking-wider hidden sm:table-cell">Kategori</th>
+              <th class="pb-3 text-[10px] sm:text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
+              <th class="pb-3 text-[10px] sm:text-xs font-medium text-gray-400 uppercase tracking-wider hidden md:table-cell">Ucapan</th>
+              <th class="pb-3 text-[10px] sm:text-xs font-medium text-gray-400 uppercase tracking-wider text-right pr-4 sm:pr-6">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="guest-table-body">
+            <!-- JS renders rows -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="px-4 sm:px-6 lg:px-8 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <p class="text-[11px] sm:text-xs text-gray-400" id="pagination-info">Menampilkan 1-6 dari 8 tamu</p>
+        <div class="flex gap-1" id="pagination-buttons">
+          <!-- JS renders buttons -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Ucapan Terbaru -->
+    <div class="mt-6 bg-white rounded-2xl border border-gray-100 p-4 sm:p-6 lg:p-8 w-full">
+      <h3 class="font-serif text-base sm:text-lg font-bold mb-4">Ucapan Terbaru</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4" id="ucapan-list">
+        <!-- JS renders ucapan -->
+      </div>
+    </div>
+
+  </div>
+</main>
+</div>
+
+<script>
+// ===== DATA =====
+let guests = [
+  {id:1, nama:'Budi Santoso', hp:'+62 812-3456-7890', kategori:'Rekan Kerja', status:'hadir', ucapan:'Selamat ya! Semoga bahagia selamanya. Maaf baru bisa konfirmasi sekarang.', waktu:'2 jam yang lalu'},
+  {id:2, nama:'Dewi Rahayu', hp:'+62 813-9876-5432', kategori:'Keluarga', status:'hadir', ucapan:'Alhamdulillah, akhirnya sampai hari bahagia kalian. Kami sekeluarga hadir!', waktu:'5 jam yang lalu'},
+  {id:3, nama:'Ahmad Prasetyo', hp:'+62 811-2233-4455', kategori:'Teman', status:'tidak', ucapan:'Maaf banget, ada urusan keluarga yang tidak bisa ditinggal. Semoga lancar ya!', waktu:'1 hari yang lalu'},
+  {id:4, nama:'Siti Maryam', hp:'+62 814-5566-7788', kategori:'Teman', status:'ragu', ucapan:'', waktu:'2 hari yang lalu'},
+  {id:5, nama:'Rudi Wijaya', hp:'+62 815-6677-8899', kategori:'Rekan Kerja', status:'hadir', ucapan:'Congrats! Sampai jumpa di hari H!', waktu:'3 hari yang lalu'},
+  {id:6, nama:'Nina Lestari', hp:'+62 816-7788-9900', kategori:'Keluarga', status:'ragu', ucapan:'', waktu:'3 hari yang lalu'},
+  {id:7, nama:'Andi Wijaya', hp:'+62 817-8899-0011', kategori:'Teman', status:'hadir', ucapan:'Selamat menempuh hidup baru!', waktu:'4 hari yang lalu'},
+  {id:8, nama:'Maya Sari', hp:'+62 818-9900-1122', kategori:'Keluarga', status:'tidak', ucapan:'Maaf tidak bisa hadir, doa terbaik untuk kalian.', waktu:'5 hari yang lalu'},
+];
+
+let currentFilter = 'all';
+let currentPage = 1;
+let editingId = null;
+const perPage = 6;
+
+// ===== TOAST =====
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ===== RENDER TABLE =====
+function renderTable() {
+  let filtered = guests;
+  const q = document.getElementById('search-guest').value.toLowerCase();
+  if (q) filtered = filtered.filter(g => g.nama.toLowerCase().includes(q));
+  if (currentFilter !== 'all') filtered = filtered.filter(g => g.status === currentFilter);
+
+  const total = filtered.length;
+  const totalPages = Math.ceil(total / perPage) || 1;
+  if (currentPage > totalPages) currentPage = totalPages;
+  const start = (currentPage - 1) * perPage;
+  const pageItems = filtered.slice(start, start + perPage);
+
+  const tbody = document.getElementById('guest-table-body');
+  tbody.innerHTML = '';
+
+  if (pageItems.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" class="py-8 text-center text-sm text-gray-400">Tidak ada data tamu</td></tr>';
+  } else {
+    pageItems.forEach(g => {
+      const badgeClass = g.status === 'hadir' ? 'badge-hadir' : g.status === 'tidak' ? 'badge-tidak' : 'badge-ragu';
+      const badgeText = g.status === 'hadir' ? 'Hadir' : g.status === 'tidak' ? 'Tidak Hadir' : 'Ragu-ragu';
+      const initials = g.nama.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+      const ucapanText = g.ucapan ? `<p class="text-xs text-gray-500 truncate max-w-[180px]">"${g.ucapan}"</p>` : '<p class="text-xs text-gray-400 italic">Belum ada ucapan</p>';
+
+      const row = document.createElement('tr');
+      row.className = 'border-b border-gray-50 fade-in hover:bg-gray-50 transition-colors';
+      row.innerHTML = `
+        <td class="py-3 pl-4 sm:pl-6">
+          <div class="flex items-center gap-2 sm:gap-3">
+            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-nirmala-sageLight flex items-center justify-center text-nirmala-sage text-[10px] sm:text-xs font-bold flex-shrink-0">${initials}</div>
+            <div class="min-w-0">
+              <p class="text-xs sm:text-sm font-medium text-nirmala-charcoal truncate">${g.nama}</p>
+              <p class="text-[10px] text-gray-400 truncate">${g.hp}</p>
+            </div>
+          </div>
+        </td>
+        <td class="py-3 hidden sm:table-cell">
+          <span class="px-2 py-0.5 bg-nirmala-warm text-nirmala-charcoal text-[10px] sm:text-xs rounded-md">${g.kategori}</span>
+        </td>
+        <td class="py-3">
+          <span class="${badgeClass} px-2 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded-full font-medium whitespace-nowrap">${badgeText}</span>
+        </td>
+        <td class="py-3 hidden md:table-cell">${ucapanText}</td>
+        <td class="py-3 text-right pr-4 sm:pr-6 relative">
+          <button onclick="toggleDropdown(${g.id},this)" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg>
+          </button>
+          <div id="dropdown-${g.id}" class="dropdown-menu">
+            <button onclick="editTamu(${g.id})" class="w-full text-left px-4 py-2 text-xs text-gray-700 hover:bg-gray-50">Edit</button>
+            <button onclick="hapusTamu(${g.id})" class="w-full text-left px-4 py-2 text-xs text-red-600 hover:bg-red-50">Hapus</button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+  }
+
+  // Update stats
+  document.getElementById('st-total').textContent = guests.length;
+  document.getElementById('st-hadir').textContent = guests.filter(g=>g.status==='hadir').length;
+  document.getElementById('st-tidak').textContent = guests.filter(g=>g.status==='tidak').length;
+  document.getElementById('st-menunggu').textContent = guests.filter(g=>g.status==='ragu').length;
+
+  // Pagination info
+  const end = Math.min(start + perPage, total);
+  document.getElementById('pagination-info').textContent = total > 0 ? `Menampilkan ${start+1}-${end} dari ${total} tamu` : 'Tidak ada tamu';
+
+  // Pagination buttons
+  const pagDiv = document.getElementById('pagination-buttons');
+  pagDiv.innerHTML = '';
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement('button');
+    btn.className = `w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-lg text-xs transition-colors ${i === currentPage ? 'bg-nirmala-charcoal text-white' : 'hover:bg-gray-100 text-gray-600'}`;
+    btn.textContent = i;
+    btn.onclick = () => { currentPage = i; renderTable(); };
+    pagDiv.appendChild(btn);
+  }
+
+  // Render ucapan
+  renderUcapan();
+}
+
+function renderUcapan() {
+  const list = document.getElementById('ucapan-list');
+  const ucapanGuests = guests.filter(g => g.ucapan).slice(0, 2);
+  list.innerHTML = '';
+  ucapanGuests.forEach(g => {
+    const badgeClass = g.status === 'hadir' ? 'badge-hadir' : g.status === 'tidak' ? 'badge-tidak' : 'badge-ragu';
+    const initials = g.nama.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+    const div = document.createElement('div');
+    div.className = 'bg-nirmala-warm rounded-xl p-3 sm:p-4';
+    div.innerHTML = `
+      <div class="flex items-center gap-2 sm:gap-3 mb-2">
+        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-nirmala-sage flex items-center justify-center text-white text-[10px] sm:text-xs font-bold flex-shrink-0">${initials}</div>
+        <div class="min-w-0">
+          <p class="text-xs sm:text-sm font-medium text-nirmala-charcoal truncate">${g.nama}</p>
+          <p class="text-[10px] text-gray-400">${g.waktu}</p>
+        </div>
+        <span class="ml-auto ${badgeClass} px-2 py-0.5 text-[10px] rounded-full flex-shrink-0">${g.status==='hadir'?'Hadir':g.status==='tidak'?'Tidak Hadir':'Ragu'}</span>
+      </div>
+      <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">"${g.ucapan}"</p>
+    `;
+    list.appendChild(div);
+  });
+}
+
+// ===== FILTER =====
+function setFilter(f) {
+  currentFilter = f;
+  currentPage = 1;
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    if (btn.dataset.filter === f) {
+      btn.className = 'filter-btn px-4 py-1.5 bg-nirmala-charcoal text-white text-xs rounded-full whitespace-nowrap';
+    } else {
+      const base = btn.dataset.filter === 'hadir' ? 'bg-nirmala-sageLight text-nirmala-sageDark hover:bg-nirmala-sage/20' :
+                   btn.dataset.filter === 'tidak' ? 'bg-red-50 text-red-600 hover:bg-red-100' :
+                   'bg-yellow-50 text-yellow-600 hover:bg-yellow-100';
+      btn.className = `filter-btn px-4 py-1.5 ${base} text-xs rounded-full whitespace-nowrap transition-colors`;
+    }
+  });
+  renderTable();
+}
+
+function filterGuests() {
+  currentPage = 1;
+  renderTable();
+}
+
+// ===== DROPDOWN =====
+let openDropdown = null;
+function toggleDropdown(id, btn) {
+  const dd = document.getElementById(`dropdown-${id}`);
+  if (openDropdown && openDropdown !== dd) openDropdown.classList.remove('open');
+  dd.classList.toggle('open');
+  openDropdown = dd.classList.contains('open') ? dd : null;
+}
+document.addEventListener('click', (e) => {
+  if (openDropdown && !e.target.closest('.dropdown-menu') && !e.target.closest('button[onclick^="toggleDropdown"]')) {
+    openDropdown.classList.remove('open');
+    openDropdown = null;
+  }
+});
+
+// ===== CRUD =====
+function openModal() {
+  document.getElementById('modal-tambah').classList.add('open');
+  document.getElementById('inp-nama').focus();
+}
+function closeModal() {
+  document.getElementById('modal-tambah').classList.remove('open');
+  document.getElementById('inp-nama').value = '';
+  document.getElementById('inp-hp').value = '';
+}
+function simpanTamu() {
+  const nama = document.getElementById('inp-nama').value.trim();
+  const hp = document.getElementById('inp-hp').value.trim();
+  const kategori = document.getElementById('inp-kategori').value;
+  const status = document.getElementById('inp-status').value;
+  if (!nama) { showToast('Nama tamu wajib diisi'); return; }
+  guests.unshift({id:Date.now(), nama, hp:hp||'-', kategori, status, ucapan:'', waktu:'Baru saja'});
+  closeModal();
+  renderTable();
+  showToast('Tamu berhasil ditambahkan');
+}
+
+function editTamu(id) {
+  const g = guests.find(x => x.id === id);
+  if (!g) return;
+  editingId = id;
+  document.getElementById('edit-nama').value = g.nama;
+  document.getElementById('edit-hp').value = g.hp;
+  document.getElementById('edit-kategori').value = g.kategori;
+  document.getElementById('edit-status').value = g.status;
+  document.getElementById('modal-edit').classList.add('open');
+  if (openDropdown) { openDropdown.classList.remove('open'); openDropdown = null; }
+}
+function closeEditModal() {
+  document.getElementById('modal-edit').classList.remove('open');
+  editingId = null;
+}
+function updateTamu() {
+  const g = guests.find(x => x.id === editingId);
+  if (!g) return;
+  g.nama = document.getElementById('edit-nama').value.trim();
+  g.hp = document.getElementById('edit-hp').value.trim() || '-';
+  g.kategori = document.getElementById('edit-kategori').value;
+  g.status = document.getElementById('edit-status').value;
+  closeEditModal();
+  renderTable();
+  showToast('Data tamu diperbarui');
+}
+function hapusTamu(id) {
+  guests = guests.filter(g => g.id !== id);
+  if (openDropdown) { openDropdown.classList.remove('open'); openDropdown = null; }
+  renderTable();
+  showToast('Tamu dihapus');
+}
+
+// ===== WHATSAPP =====
+const baseUrl = 'https://nirmalainvite.com/ayu-raka?to=';
+function generateLink() {
+  const name = document.getElementById('wa-name').value.trim();
+  if (!name) { showToast('Masukkan nama tamu dulu'); return; }
+  const fullUrl = baseUrl + encodeURIComponent(name);
+  document.getElementById('wa-link').value = fullUrl;
+  const msg = `Assalamualaikum ${name},\n\nKami mengundang Anda untuk hadir di pernikahan kami.\n\nSilakan lihat undangan digital kami di:\n${fullUrl}\n\nMohon konfirmasi kehadiran Anda. Terima kasih! 🙏`;
+  const btn = document.getElementById('wa-send-btn');
+  btn.href = 'https://wa.me/?text=' + encodeURIComponent(msg);
+  btn.classList.remove('opacity-50','pointer-events-none');
+  showToast('Link berhasil dibuat');
+}
+function copyLink() {
+  const inp = document.getElementById('wa-link');
+  if (!inp.value.includes('?to=') || inp.value.endsWith('?to=')) { showToast('Generate link dulu'); return; }
+  navigator.clipboard?.writeText(inp.value).then(() => showToast('Link disalin!'));
+}
+
+// Init
+renderTable();
+</script>
+</body>
+</html>

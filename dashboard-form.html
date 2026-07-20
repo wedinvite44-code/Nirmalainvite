@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Form Undangan | Nirmala Invite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        nirmala: {
+                            white: '#FAFBF7',
+                            sage: '#9CAF88',
+                            sageLight: '#E8EDE3',
+                            sageDark: '#7A8F6A',
+                            gold: '#C9A84C',
+                            goldLight: '#F0E6C8',
+                            goldDark: '#A88A3A',
+                            charcoal: '#2D2D2D',
+                            warm: '#F5F0E8'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .stepper-line { background: linear-gradient(to right, #9CAF88 var(--progress, 0%), #E8EDE3 var(--progress, 0%)); }
+        .photo-frame { border: 3px solid #E8EDE3; transition: all 0.3s ease; }
+        .photo-frame:hover { border-color: #C9A84C; }
+        .drop-zone { border: 2px dashed #9CAF88; transition: all 0.3s ease; }
+        .drop-zone.dragover { background: #E8EDE3; border-color: #7A8F6A; border-style: solid; }
+        .gallery-item { animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        .timeline-dot::before { content: ''; position: absolute; left: 15px; top: 40px; bottom: -20px; width: 2px; background: #E8EDE3; }
+        .timeline-item:last-child .timeline-dot::before { display: none; }
+        .input-focus:focus { ring: 2px; ring-color: #9CAF88; border-color: #9CAF88; }
+        .step-content { display: none; animation: slideIn 0.4s ease; }
+        .step-content.active { display: block; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+        /* Validation styles */
+        .field-error { border-color: #ef4444 !important; background-color: #fef2f2 !important; }
+        .field-error:focus { border-color: #ef4444 !important; box-shadow: 0 0 0 3px rgba(239,68,68,0.15) !important; }
+        .field-valid { border-color: #9CAF88 !important; }
+        .error-message { color: #ef4444; font-size: 12px; margin-top: 4px; display: none; }
+        .error-message.show { display: block; animation: shake 0.3s ease; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+        .step-error-badge { display: none; }
+        .step-error-badge.show { display: inline-flex; }
+    </style>
+</head>
+<body class="font-sans bg-nirmala-white text-nirmala-charcoal antialiased">
+
+    <!-- Sidebar + Main Layout -->
+    <div class="flex min-h-screen">
+
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white border-r border-gray-100 hidden lg:flex flex-col fixed h-full z-20">
+            <div class="p-6 border-b border-gray-100">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-nirmala-gold flex items-center justify-center">
+                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
+                    </div>
+                    <span class="font-serif font-bold text-nirmala-charcoal">Nirmala Invite</span>
+                </div>
+            </div>
+            <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 bg-nirmala-sageLight text-nirmala-sageDark rounded-xl font-medium text-sm">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                    Isi Data Undangan
+                </a>
+                <a href="dashboard-rsvp.html" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-xl font-medium text-sm transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    Buku Tamu & RSVP
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-xl font-medium text-sm transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    Galeri & Media
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-xl font-medium text-sm transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    Pengaturan
+                </a>
+            </nav>
+            <div class="p-4 border-t border-gray-100">
+                <div class="flex items-center gap-3 px-4 py-3">
+                    <div class="w-9 h-9 rounded-full bg-nirmala-sage flex items-center justify-center text-white text-sm font-bold">AR</div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-nirmala-charcoal truncate">Ayu & Raka</p>
+                        <p class="text-xs text-gray-400">Paket Nirmala</p>
+                    </div>
+                    <a href="login.html" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors" title="Keluar">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 lg:ml-64">
+            <!-- Top Bar -->
+            <header class="bg-white border-b border-gray-100 px-6 lg:px-10 py-4 sticky top-0 z-10">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="font-serif text-xl font-bold text-nirmala-charcoal">Buat Undangan</h1>
+                        <p class="text-xs text-gray-400">Lengkapi data pernikahanmu langkah demi langkah</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button class="px-4 py-2 text-sm text-gray-600 hover:text-nirmala-charcoal transition-colors">Bantuan</button>
+                        <div class="w-8 h-8 rounded-full bg-nirmala-sage flex items-center justify-center text-white text-xs font-bold lg:hidden">AR</div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="max-w-4xl mx-auto px-6 lg:px-10 py-8">
+
+                <!-- Stepper -->
+                <div class="mb-10">
+                    <div class="flex items-center justify-between relative">
+                        <div class="absolute top-5 left-0 right-0 h-0.5 bg-nirmala-sageLight -z-10">
+                            <div id="stepper-progress" class="h-full bg-nirmala-sage transition-all duration-500" style="width: 0%"></div>
+                        </div>
+
+                        <div class="step-item flex flex-col items-center gap-2 cursor-pointer" data-step="1">
+                            <div class="step-circle w-10 h-10 rounded-full bg-nirmala-sage text-white flex items-center justify-center text-sm font-bold transition-all relative">
+                                1
+                                <span class="step-error-badge absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[8px] rounded-full items-center justify-center font-bold">!</span>
+                            </div>
+                            <span class="text-xs font-medium text-nirmala-sageDark">Pengantin</span>
+                        </div>
+                        <div class="step-item flex flex-col items-center gap-2 cursor-pointer" data-step="2">
+                            <div class="step-circle w-10 h-10 rounded-full bg-nirmala-sageLight text-gray-400 flex items-center justify-center text-sm font-bold transition-all relative">
+                                2
+                                <span class="step-error-badge absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[8px] rounded-full items-center justify-center font-bold">!</span>
+                            </div>
+                            <span class="text-xs font-medium text-gray-400">Waktu & Tempat</span>
+                        </div>
+                        <div class="step-item flex flex-col items-center gap-2 cursor-pointer" data-step="3">
+                            <div class="step-circle w-10 h-10 rounded-full bg-nirmala-sageLight text-gray-400 flex items-center justify-center text-sm font-bold transition-all relative">
+                                3
+                                <span class="step-error-badge absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[8px] rounded-full items-center justify-center font-bold">!</span>
+                            </div>
+                            <span class="text-xs font-medium text-gray-400">Cerita & Galeri</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Validation Alert -->
+                <div id="validation-alert" class="hidden mb-6 bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
+                    <svg class="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <div>
+                        <p class="text-sm font-medium text-red-700">Data Belum Lengkap</p>
+                        <p class="text-xs text-red-600 mt-0.5">Harap isi semua field yang wajib diisi (ditandai dengan *) sebelum melanjutkan.</p>
+                    </div>
+                </div>
+
+                <!-- Step 1: Pengantin & Keluarga -->
+                <div id="step-1" class="step-content active">
+                    <div class="bg-white rounded-2xl border border-gray-100 p-6 lg:p-8 mb-6">
+                        <h2 class="font-serif text-2xl font-bold text-nirmala-charcoal mb-2">Data Pengantin & Keluarga</h2>
+                        <p class="text-sm text-gray-500 mb-8">Isi informasi lengkap mempelai dan keluarga besar. <span class="text-red-500">*</span> = wajib diisi</p>
+
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <!-- Mempelai Pria -->
+                            <div>
+                                <h3 class="font-medium text-nirmala-charcoal mb-4 flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
+                                        <svg class="w-3 h-3 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                                    </div>
+                                    Mempelai Pria
+                                </h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Lengkap <span class="text-red-500">*</span></label>
+                                        <input type="text" data-validate="required" placeholder="Contoh: Bima Arya Pratama" class="validate-field w-full px-4 py-2.5 bg-nirmala-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage focus:ring-2 focus:ring-nirmala-sage/20 transition-all">
+                                        <p class="error-message">Nama lengkap wajib diisi</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Panggilan <span class="text-red-500">*</span></label>
+                                        <input type="text" data-validate="required" placeholder="Contoh: Bima" class="validate-field w-full px-4 py-2.5 bg-nirmala-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage focus:ring-2 focus:ring-nirmala-sage/20 transition-all">
+                                        <p class="error-message">Nama panggilan wajib diisi</p>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Ayah <span class="text-red-500">*</span></label>
+                                            <input type="text" data-validate="required" placeholder="Nama Ayah" class="validate-field w-full px-4 py-2.5 bg-nirmala-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage focus:ring-2 focus:ring-nirmala-sage/20 transition-all">
+                                            <p class="error-message">Nama ayah wajib diisi</p>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Ibu <span class="text-red-500">*</span></label>
+                                            <input type="text" data-validate="required" placeholder="Nama Ibu" class="validate-field w-full px-4 py-2.5 bg-nirmala-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage focus:ring-2 focus:ring-nirmala-sage/20 transition-all">
+                                            <p class="error-message">Nama ibu wajib diisi</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Instagram <span class="text-gray-400 font-normal">(opsional)</span></label>
+                                        <div class="relative">
+                                            <span class="absolute left-4 top-2.5 text-gray-400 text-sm">@</span>
+                                            <input type="text" data-validate="optional" placeholder="username" class="validate-field w-full pl-8 pr-4 py-2.5 bg-nirmala-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage focus:ring-2 focus:ring-nirmala-sage/20 transition-all">
+                                        </div>
+                                    </div>
+                                    <!-- Photo Upload -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Foto Profil <span class="text-gray-400 font-normal">(opsional)</span></label>
+                                        <div class="photo-frame w-28 h-28 rounded-2xl bg-nirmala-sageLight flex flex-col items-center justify-center cursor-pointer hover:bg-nirmala-sage/20 relative overflow-hidden group">
+                                            <svg class="w-8 h-8 text-nirmala-sage mb-1 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                            <span class="text-[10px] text-nirmala-sageDark">Upload Foto</span>
+                                            <input type="file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Mempelai Wanita -->
+                            <div>
+                                <h3 class="font-medium text-nirmala-charcoal mb-4 flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-full bg-pink-100 flex items-center justify-center">
+                                        <svg class="w-3 h-3 text-pink-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                                    </div>
+                                    Mempelai Wanita
+                                </h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Lengkap <span class="text-red-500">*</span></label>
+                                        <input type="text" data-validate="required" placeholder="Contoh: Rara Kirana Dewi" class="validate-field w-full px-4 py-2.5 bg-nirmala-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage focus:ring-2 focus:ring-nirmala-sage/20 transition-all">
+                                        <p class="error-message">Nama lengkap wajib diisi</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Panggilan <span class="text-red-500">*</span></label>
+                                        <input type="text" data-validate="required" placeholder="Contoh: Rara" class="validate-field w-full px-4 py-2.5 bg-nirmala-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage focus:ring-2 focus:ring-nirmala-sage/20 transition-all">
+                                        <p class="error-message">Nama panggilan wajib diisi</p>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Ayah <span class="text-red-500">*</span></label>
+                                            <input type="text" data-validate="required" placeholder="Nama Ayah" class="validate-field w-full px-4 py-2.5 bg-nirmala-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage focus:ring-2 focus:ring-nirmala-sage/20 transition-all">
+                                            <p class="error-message">Nama ayah wajib diisi</p>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Ibu <span class="text-red-500">*</span></label>
+                                            <input type="text" data-validate="required" placeholder="Nama Ibu" class="validate-field w-full px-4 py-2.5 bg-nirmala-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage focus:ring-2 focus:ring-nirmala-sage/20 transition-all">
+                                            <p class="error-message">Nama ibu wajib diisi</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Instagram <span class="text-gray-400 font-normal">(opsional)</span></label>
+                                        <div class="relative">
+                                            <span class="absolute left-4 top-2.5 text-gray-400 text-sm">@</span>
+                                            <input type="text" data-validate="optional" placeholder="username" class="validate-field w-full pl-8 pr-4 py-2.5 bg-nirmala-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage focus:ring-2 focus:ring-nirmala-sage/20 transition-all">
+                                        </div>
+                                    </div>
+                                    <!-- Photo Upload -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Foto Profil <span class="text-gray-400 font-normal">(opsional)</span></label>
+                                        <div class="photo-frame w-28 h-28 rounded-2xl bg-nirmala-sageLight flex flex-col items-center justify-center cursor-pointer hover:bg-nirmala-sage/20 relative overflow-hidden group">
+                                            <svg class="w-8 h-8 text-nirmala-sage mb-1 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                            <span class="text-[10px] text-nirmala-sageDark">Upload Foto</span>
+                                            <input type="file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Waktu & Tempat -->
+                <div id="step-2" class="step-content">
+                    <div class="bg-white rounded-2xl border border-gray-100 p-6 lg:p-8 mb-6">
+                        <h2 class="font-serif text-2xl font-bold text-nirmala-charcoal mb-2">Waktu & Tempat Acara</h2>
+                        <p class="text-sm text-gray-500 mb-8">Tentukan jadwal dan lokasi pernikahanmu. <span class="text-red-500">*</span> = wajib diisi</p>
+
+                        <!-- Akad Nikah -->
+                        <div class="mb-8">
+                            <h3 class="font-medium text-nirmala-charcoal mb-4 flex items-center gap-2">
+                                <div class="w-8 h-8 rounded-lg bg-nirmala-sageLight flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-nirmala-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                </div>
+                                Akad Nikah
+                            </h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Tanggal <span class="text-red-500">*</span></label>
+                                    <input type="date" data-validate="required" class="validate-field w-full px-4 py-2.5 bg-nirmala-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage focus:ring-2 focus:ring-nirmala-sage/20 transition-all">
+                                    <p class="error-message">Tanggal akad wajib diisi</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Waktu Mulai <span class="text-red-500">*</span></label>
+                                    <input type="time" data-validate="required" class="validate-field w-full px-4 py-2.5 bg-nirmala-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage focus:ring-2 focus:ring-nirmala-sage/20 transition-all">
+                                    <p class="error-message">Waktu akad wajib diisi</p>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Lokasi / Nama Gedung <span class="text-red-500">*</span></label>
+                                    <input type="text" data-validate="required" placeholder="Contoh: Masjid Al-Hikmah, Jakarta" class="validate-field w-full px-4 py-2.5 bg-nirmala-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage focus:ring-2 focus:ring-nirmala-sage/20 transition-all">
+                                    <p class="error-message">Lokasi akad wajib diisi</p>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Alamat Lengkap <span class="text-red-500">*</span></label>
+                                    <textarea data-validate="required" rows="2" placeholder="Jl. Mawar No. 123, Jakarta Selatan" class="validate-field w-full px-4 py-2.5 bg-nirmala-white border border-gray-200 rounded-xl text-sm resize-none focus:outline-none focus:border-nirmala-sage focus:ring-2 focus:ring-nirmala-sage/20 transition-all"></textarea>
+                                    <p class="error-message">Alamat lengkap wajib diisi</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Resepsi -->
+                        <div class="mb-8">
+                            <h3 class="font-medium text-nirmala-charcoal mb-4 flex items-center gap-2">
+                                <div class="w-8 h-8 rounded-lg bg-nirmala-goldLight flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-nirmala-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                                </div>
+                                Resepsi
+                            </h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Tanggal <span class="text-red-500">*</span></label>
+                                    <input type="date" data-validate="required" class="validate-field w-full px-4 py-2.5 bg-nirmala-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage focus:ring-2 focus:ring-nirmala-sage/20 transition-all">
+                                    <p class="error-message">Tanggal resepsi wajib diisi</p>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Waktu Mulai <span class="text-red-500">*</span></label>
+                                        <input type="time" data-validate="required" class="validate-field w-full px-4 py-2.5 bg-nirmala-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage focus:ring-2 focus:ring-nirmala-sage/20 transition-all">
+                                        <p class="error-message">Waktu mulai wajib diisi</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Selesai <span class="text-red-500">*</span></label>
+                                        <input type="time" data-validate="required" class="validate-field w-full px-4 py-2.5 bg-nirmala-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage focus:ring-2 focus:ring-nirmala-sage/20 transition-all">
+                                        <p class="error-message">Waktu selesai wajib diisi</p>
+                                    </div>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Lokasi / Nama Gedung <span class="text-red-500">*</span></label>
+                                    <input type="text" data-validate="required" placeholder="Contoh: Gedung Serba Guna Mawar" class="validate-field w-full px-4 py-2.5 bg-nirmala-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage focus:ring-2 focus:ring-nirmala-sage/20 transition-all">
+                                    <p class="error-message">Lokasi resepsi wajib diisi</p>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Alamat Lengkap <span class="text-red-500">*</span></label>
+                                    <textarea data-validate="required" rows="2" placeholder="Jl. Melati No. 456, Jakarta Selatan" class="validate-field w-full px-4 py-2.5 bg-nirmala-white border border-gray-200 rounded-xl text-sm resize-none focus:outline-none focus:border-nirmala-sage focus:ring-2 focus:ring-nirmala-sage/20 transition-all"></textarea>
+                                    <p class="error-message">Alamat lengkap wajib diisi</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Maps Integration -->
+                        <div class="bg-nirmala-warm rounded-2xl p-6">
+                            <h3 class="font-medium text-nirmala-charcoal mb-4 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-nirmala-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                Sematkan Peta <span class="text-gray-400 font-normal text-xs">(opsional)</span>
+                            </h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Link Google Maps</label>
+                                    <div class="relative">
+                                        <input type="url" data-validate="optional" placeholder="https://maps.google.com/..." class="validate-field w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage focus:ring-2 focus:ring-nirmala-sage/20 transition-all">
+                                        <svg class="w-4 h-4 text-gray-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Link Waze</label>
+                                    <div class="relative">
+                                        <input type="url" data-validate="optional" placeholder="https://waze.com/..." class="validate-field w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-nirmala-sage focus:ring-2 focus:ring-nirmala-sage/20 transition-all">
+                                        <svg class="w-4 h-4 text-gray-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4 p-4 bg-white rounded-xl border border-dashed border-gray-300 text-center">
+                                <svg class="w-8 h-8 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 7m0 13V7"/></svg>
+                                <p class="text-xs text-gray-400">Preview peta akan muncul di sini setelah link dimasukkan</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Cerita & Galeri -->
+                <div id="step-3" class="step-content">
+                    <div class="bg-white rounded-2xl border border-gray-100 p-6 lg:p-8 mb-6">
+                        <h2 class="font-serif text-2xl font-bold text-nirmala-charcoal mb-2">Cerita Cinta & Galeri</h2>
+                        <p class="text-sm text-gray-500 mb-8">Bagikan perjalanan cintamu dan koleksi foto berharga. <span class="text-red-500">*</span> = wajib diisi</p>
+
+                        <!-- Love Story Timeline -->
+                        <div class="mb-10">
+                            <h3 class="font-medium text-nirmala-charcoal mb-6 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-nirmala-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                                Linimasa Perjalanan Cinta
+                            </h3>
+                            <div id="timeline-container" class="space-y-6">
+                                <div class="timeline-item flex gap-4">
+                                    <div class="timeline-dot relative flex-shrink-0 w-8 h-8 rounded-full bg-nirmala-sage flex items-center justify-center">
+                                        <span class="text-white text-xs font-bold">1</span>
+                                    </div>
+                                    <div class="flex-1 pb-6">
+                                        <div class="grid md:grid-cols-3 gap-3">
+                                            <div>
+                                                <label class="block text-xs font-medium text-gray-500 mb-1">Tahun / Tanggal <span class="text-red-500">*</span></label>
+                                                <input type="text" data-validate="required" placeholder="Tahun / Tanggal" class="validate-field w-full px-3 py-2 bg-nirmala-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-nirmala-sage">
+                                                <p class="error-message">Tanggal wajib diisi</p>
+                                            </div>
+                                            <div class="md:col-span-2">
+                                                <label class="block text-xs font-medium text-gray-500 mb-1">Judul Momen <span class="text-red-500">*</span></label>
+                                                <input type="text" data-validate="required" placeholder="Judul momen (contoh: Pertama Bertemu)" class="validate-field w-full px-3 py-2 bg-nirmala-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-nirmala-sage mb-2">
+                                                <p class="error-message">Judul wajib diisi</p>
+                                                <label class="block text-xs font-medium text-gray-500 mb-1">Cerita <span class="text-red-500">*</span></label>
+                                                <textarea data-validate="required" rows="2" placeholder="Ceritakan momen spesial ini..." class="validate-field w-full px-3 py-2 bg-nirmala-white border border-gray-200 rounded-lg text-sm resize-none focus:outline-none focus:border-nirmala-sage"></textarea>
+                                                <p class="error-message">Cerita wajib diisi</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="timeline-item flex gap-4">
+                                    <div class="timeline-dot relative flex-shrink-0 w-8 h-8 rounded-full bg-nirmala-sage flex items-center justify-center">
+                                        <span class="text-white text-xs font-bold">2</span>
+                                    </div>
+                                    <div class="flex-1 pb-6">
+                                        <div class="grid md:grid-cols-3 gap-3">
+                                            <div>
+                                                <label class="block text-xs font-medium text-gray-500 mb-1">Tahun / Tanggal <span class="text-red-500">*</span></label>
+                                                <input type="text" data-validate="required" placeholder="Tahun / Tanggal" class="validate-field w-full px-3 py-2 bg-nirmala-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-nirmala-sage">
+                                                <p class="error-message">Tanggal wajib diisi</p>
+                                            </div>
+                                            <div class="md:col-span-2">
+                                                <label class="block text-xs font-medium text-gray-500 mb-1">Judul Momen <span class="text-red-500">*</span></label>
+                                                <input type="text" data-validate="required" placeholder="Judul momen" class="validate-field w-full px-3 py-2 bg-nirmala-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-nirmala-sage mb-2">
+                                                <p class="error-message">Judul wajib diisi</p>
+                                                <label class="block text-xs font-medium text-gray-500 mb-1">Cerita <span class="text-red-500">*</span></label>
+                                                <textarea data-validate="required" rows="2" placeholder="Ceritakan momen spesial ini..." class="validate-field w-full px-3 py-2 bg-nirmala-white border border-gray-200 rounded-lg text-sm resize-none focus:outline-none focus:border-nirmala-sage"></textarea>
+                                                <p class="error-message">Cerita wajib diisi</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button id="add-timeline" class="mt-2 flex items-center gap-2 text-sm text-nirmala-sage font-medium hover:text-nirmala-sageDark transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                                Tambah Momen
+                            </button>
+                        </div>
+
+                        <!-- Gallery Upload -->
+                        <div>
+                            <h3 class="font-medium text-nirmala-charcoal mb-4 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-nirmala-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                Galeri Foto <span class="text-xs text-gray-400 font-normal">(opsional, maks. 12 foto)</span>
+                            </h3>
+
+                            <div id="drop-zone" class="drop-zone rounded-2xl p-8 text-center mb-4">
+                                <svg class="w-10 h-10 text-nirmala-sage mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                                <p class="text-sm text-gray-600 mb-1">Seret foto ke sini atau <span class="text-nirmala-sage font-medium">klik untuk upload</span></p>
+                                <p class="text-xs text-gray-400">JPG, PNG hingga 5MB per foto</p>
+                                <input type="file" multiple accept="image/*" id="gallery-input" class="hidden">
+                            </div>
+
+                            <div id="gallery-grid" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                                <!-- Gallery items will be added here -->
+                                <div class="gallery-item aspect-square rounded-xl bg-nirmala-sageLight flex items-center justify-center border-2 border-dashed border-nirmala-sage/30 cursor-pointer hover:bg-nirmala-sage/20 transition-colors" onclick="document.getElementById('gallery-input').click()">
+                                    <svg class="w-6 h-6 text-nirmala-sage/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                                </div>
+                            </div>
+                            <p id="gallery-count" class="text-xs text-gray-400 mt-2 text-right">0 / 12 foto diunggah</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center justify-between pt-4 pb-8">
+                    <button id="btn-prev" class="px-6 py-2.5 border border-gray-200 text-gray-600 text-sm font-medium rounded-full hover:bg-gray-50 transition-all hidden">
+                        Kembali
+                    </button>
+                    <div class="flex gap-3 ml-auto">
+                        <button class="px-6 py-2.5 border border-nirmala-sage text-nirmala-sageDark text-sm font-medium rounded-full hover:bg-nirmala-sageLight transition-all flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                            Simpan Draft
+                        </button>
+                        <button id="btn-next" class="px-6 py-2.5 bg-nirmala-gold text-white text-sm font-medium rounded-full hover:bg-nirmala-goldDark transition-all shadow-lg shadow-nirmala-gold/20 flex items-center gap-2">
+                            Lanjut
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Stepper Logic
+        let currentStep = 1;
+        const totalSteps = 3;
+        const stepContents = document.querySelectorAll('.step-content');
+        const stepItems = document.querySelectorAll('.step-item');
+        const stepCircles = document.querySelectorAll('.step-circle');
+        const progressBar = document.getElementById('stepper-progress');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const validationAlert = document.getElementById('validation-alert');
+
+        // Validation: Check if current step is valid
+        function validateStep(stepNum) {
+            const stepContent = document.getElementById(`step-${stepNum}`);
+            if (!stepContent) return true;
+
+            const fields = stepContent.querySelectorAll('[data-validate="required"]');
+            let isValid = true;
+            let firstInvalid = null;
+
+            fields.forEach(field => {
+                // Get the value (handle both input and textarea)
+                const value = field.value.trim();
+                const errorMsg = field.parentElement.querySelector('.error-message');
+
+                if (!value) {
+                    isValid = false;
+                    field.classList.add('field-error');
+                    field.classList.remove('field-valid');
+                    if (errorMsg) errorMsg.classList.add('show');
+                    if (!firstInvalid) firstInvalid = field;
+                } else {
+                    field.classList.remove('field-error');
+                    field.classList.add('field-valid');
+                    if (errorMsg) errorMsg.classList.remove('show');
+                }
+            });
+
+            // Show/hide validation alert
+            if (!isValid) {
+                validationAlert.classList.remove('hidden');
+                if (firstInvalid) {
+                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstInvalid.focus();
+                }
+            } else {
+                validationAlert.classList.add('hidden');
+            }
+
+            // Update step error badge
+            const stepBadge = stepItems[stepNum - 1].querySelector('.step-error-badge');
+            if (stepBadge) {
+                if (!isValid) {
+                    stepBadge.classList.add('show');
+                } else {
+                    stepBadge.classList.remove('show');
+                }
+            }
+
+            return isValid;
+        }
+
+        // Real-time validation: clear error when user types
+        document.querySelectorAll('[data-validate="required"]').forEach(field => {
+            field.addEventListener('input', function() {
+                if (this.value.trim()) {
+                    this.classList.remove('field-error');
+                    this.classList.add('field-valid');
+                    const errorMsg = this.parentElement.querySelector('.error-message');
+                    if (errorMsg) errorMsg.classList.remove('show');
+                }
+            });
+
+            field.addEventListener('blur', function() {
+                if (!this.value.trim()) {
+                    this.classList.add('field-error');
+                    this.classList.remove('field-valid');
+                    const errorMsg = this.parentElement.querySelector('.error-message');
+                    if (errorMsg) errorMsg.classList.add('show');
+                }
+            });
+        });
+
+        function updateStepper() {
+            // Update progress bar
+            const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+            progressBar.style.width = progress + '%';
+
+            // Update step circles
+            stepItems.forEach((item, index) => {
+                const circle = item.querySelector('.step-circle');
+                const label = item.querySelector('span:not(.step-error-badge)');
+                const stepNum = index + 1;
+
+                if (stepNum < currentStep) {
+                    circle.className = 'step-circle w-10 h-10 rounded-full bg-nirmala-sage text-white flex items-center justify-center text-sm font-bold transition-all relative';
+                    circle.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
+                    label.className = 'text-xs font-medium text-nirmala-sageDark';
+                } else if (stepNum === currentStep) {
+                    circle.className = 'step-circle w-10 h-10 rounded-full bg-nirmala-sage text-white flex items-center justify-center text-sm font-bold transition-all ring-4 ring-nirmala-sage/20 relative';
+                    circle.innerHTML = stepNum + '<span class="step-error-badge absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[8px] rounded-full items-center justify-center font-bold">!</span>';
+                    label.className = 'text-xs font-medium text-nirmala-sage';
+                } else {
+                    circle.className = 'step-circle w-10 h-10 rounded-full bg-nirmala-sageLight text-gray-400 flex items-center justify-center text-sm font-bold transition-all relative';
+                    circle.innerHTML = stepNum + '<span class="step-error-badge absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[8px] rounded-full items-center justify-center font-bold">!</span>';
+                    label.className = 'text-xs font-medium text-gray-400';
+                }
+            });
+
+            // Show/hide content
+            stepContents.forEach((content, index) => {
+                content.classList.toggle('active', index + 1 === currentStep);
+            });
+
+            // Update buttons
+            btnPrev.classList.toggle('hidden', currentStep === 1);
+            btnNext.innerHTML = currentStep === totalSteps 
+                ? 'Selesai <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>'
+                : 'Lanjut <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>';
+        }
+
+        btnNext.addEventListener('click', () => {
+            // Validate current step before proceeding
+            if (!validateStep(currentStep)) {
+                return; // Stop if validation fails
+            }
+
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateStepper();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                // Final step - validate again and submit
+                if (validateStep(currentStep)) {
+                    alert('Data undangan berhasil disimpan!');
+                }
+            }
+        });
+
+        btnPrev.addEventListener('click', () => {
+            if (currentStep > 1) {
+                currentStep--;
+                validationAlert.classList.add('hidden');
+                updateStepper();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+
+        stepItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const step = parseInt(item.dataset.step);
+                // Only allow clicking to steps that are already completed or current + 1
+                if (step <= currentStep) {
+                    currentStep = step;
+                    validationAlert.classList.add('hidden');
+                    updateStepper();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Timeline - Add new moment
+        let timelineCount = 2;
+        document.getElementById('add-timeline').addEventListener('click', () => {
+            timelineCount++;
+            const container = document.getElementById('timeline-container');
+            const newItem = document.createElement('div');
+            newItem.className = 'timeline-item flex gap-4';
+            newItem.innerHTML = `
+                <div class="timeline-dot relative flex-shrink-0 w-8 h-8 rounded-full bg-nirmala-sage flex items-center justify-center">
+                    <span class="text-white text-xs font-bold">${timelineCount}</span>
+                </div>
+                <div class="flex-1 pb-6">
+                    <div class="grid md:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Tahun / Tanggal <span class="text-red-500">*</span></label>
+                            <input type="text" data-validate="required" placeholder="Tahun / Tanggal" class="validate-field w-full px-3 py-2 bg-nirmala-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-nirmala-sage">
+                            <p class="error-message">Tanggal wajib diisi</p>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Judul Momen <span class="text-red-500">*</span></label>
+                            <input type="text" data-validate="required" placeholder="Judul momen" class="validate-field w-full px-3 py-2 bg-nirmala-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-nirmala-sage mb-2">
+                            <p class="error-message">Judul wajib diisi</p>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Cerita <span class="text-red-500">*</span></label>
+                            <textarea data-validate="required" rows="2" placeholder="Ceritakan momen spesial ini..." class="validate-field w-full px-3 py-2 bg-nirmala-white border border-gray-200 rounded-lg text-sm resize-none focus:outline-none focus:border-nirmala-sage"></textarea>
+                            <p class="error-message">Cerita wajib diisi</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(newItem);
+
+            // Attach validation listeners to new fields
+            newItem.querySelectorAll('[data-validate="required"]').forEach(field => {
+                field.addEventListener('input', function() {
+                    if (this.value.trim()) {
+                        this.classList.remove('field-error');
+                        this.classList.add('field-valid');
+                        const errorMsg = this.parentElement.querySelector('.error-message');
+                        if (errorMsg) errorMsg.classList.remove('show');
+                    }
+                });
+                field.addEventListener('blur', function() {
+                    if (!this.value.trim()) {
+                        this.classList.add('field-error');
+                        this.classList.remove('field-valid');
+                        const errorMsg = this.parentElement.querySelector('.error-message');
+                        if (errorMsg) errorMsg.classList.add('show');
+                    }
+                });
+            });
+        });
+
+        // Gallery Drag & Drop
+        const dropZone = document.getElementById('drop-zone');
+        const galleryInput = document.getElementById('gallery-input');
+        const galleryGrid = document.getElementById('gallery-grid');
+        const galleryCount = document.getElementById('gallery-count');
+        let uploadedPhotos = 0;
+        const maxPhotos = 12;
+
+        dropZone.addEventListener('click', () => galleryInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        galleryInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        function handleFiles(files) {
+            Array.from(files).forEach(file => {
+                if (uploadedPhotos >= maxPhotos) return;
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        addGalleryItem(e.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        function addGalleryItem(src) {
+            uploadedPhotos++;
+            const addBtn = galleryGrid.querySelector('.gallery-item:last-child');
+            const newItem = document.createElement('div');
+            newItem.className = 'gallery-item aspect-square rounded-xl overflow-hidden relative group';
+            newItem.innerHTML = `
+                <img src="${src}" class="w-full h-full object-cover" alt="Gallery">
+                <button class="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-xs" onclick="removePhoto(this)">×</button>
+            `;
+            galleryGrid.insertBefore(newItem, addBtn);
+            galleryCount.textContent = `${uploadedPhotos} / ${maxPhotos} foto diunggah`;
+
+            if (uploadedPhotos >= maxPhotos) {
+                addBtn.style.display = 'none';
+            }
+        }
+
+        function removePhoto(btn) {
+            btn.closest('.gallery-item').remove();
+            uploadedPhotos--;
+            galleryCount.textContent = `${uploadedPhotos} / ${maxPhotos} foto diunggah`;
+            const addBtn = galleryGrid.querySelector('.gallery-item:last-child');
+            if (addBtn) addBtn.style.display = 'flex';
+        }
+    </script>
+</body>
+</html>
