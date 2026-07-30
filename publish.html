@@ -1,0 +1,1946 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>E · M Atelier — Terbitkan & Bagikan</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap');
+  :root {
+    --bg: #FAFAF8; --text-primary: #1A1A1A; --text-secondary: #8B8680; --text-muted: #A8A29E;
+    --accent: #B8956A; --accent-light: #D4C4A8; --dark: #1C2421; --border: #E8E4DE;
+    --border-light: #F0EDE8; --surface: #FFFFFF; --preview-bg: #F5F3EF;
+    --success: #4A7C59; --success-light: #E8F5E9;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #E5E5E5; color: var(--text-primary); overflow-x: hidden;
+  }
+  .em-widget {
+    background: var(--bg); color: var(--text-primary); width: 100%; max-width: 420px;
+    margin: 0 auto; min-height: 100vh; position: relative; overflow: hidden;
+    border: 1px solid var(--border); border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+  .em-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 24px; position: sticky; top: 0; z-index: 50;
+    background: rgba(250,250,248,0.85); backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid transparent;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .em-header.scrolled {
+    background: rgba(250,250,248,0.98); border-bottom-color: var(--border-light);
+    box-shadow: 0 1px 12px rgba(0,0,0,0.04); padding: 12px 24px;
+  }
+  .em-logo {
+    font-family: 'Cormorant Garamond', Georgia, serif; font-size: 18px;
+    font-weight: 500; letter-spacing: 3px; color: var(--text-primary);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+  }
+  .em-header.scrolled .em-logo { font-size: 16px; letter-spacing: 2.5px; }
+  .em-menu-btn {
+    width: 24px; height: 24px; display: flex; flex-direction: column;
+    justify-content: center; gap: 5px; cursor: pointer; background: none; border: none;
+    transition: transform 0.3s;
+  }
+  .em-menu-btn:hover { transform: scale(1.1); }
+  .em-menu-btn span {
+    display: block; height: 1.5px; background: var(--text-primary); border-radius: 1px;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .em-menu-btn span:nth-child(1) { width: 18px; }
+  .em-menu-btn span:nth-child(2) { width: 14px; }
+  .em-menu-btn span:nth-child(3) { width: 18px; }
+  .em-menu-btn.active span:nth-child(1) { transform: rotate(45deg) translate(4px, 4px); width: 18px; }
+  .em-menu-btn.active span:nth-child(2) { opacity: 0; width: 0; }
+  .em-menu-btn.active span:nth-child(3) { transform: rotate(-45deg) translate(4px, -4px); width: 18px; }
+
+  .em-content {
+    height: calc(100vh - 61px); max-height: 740px; overflow-y: auto;
+    scrollbar-width: none; position: relative;
+  }
+  .em-content::-webkit-scrollbar { display: none; }
+
+  /* SIDEBAR */
+  .em-sidebar-overlay {
+    position: absolute; inset: 0; background: rgba(0,0,0,0.15);
+    opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 60;
+  }
+  .em-sidebar-overlay.open { opacity: 1; pointer-events: auto; }
+  .em-sidebar {
+    position: absolute; top: 0; left: 0; width: 260px; height: 100%;
+    background: rgba(250,250,248,0.98); backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); z-index: 70;
+    transform: translateX(-100%); transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    padding: 24px; display: flex; flex-direction: column;
+  }
+  .em-sidebar.open { transform: translateX(0); }
+  .em-sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+  .em-close-btn {
+    background: none; border: none; font-size: 22px; color: var(--text-secondary);
+    cursor: pointer; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+  }
+
+  .em-sidebar-logo {
+    font-family: 'Cormorant Garamond', Georgia, serif; font-size: 20px;
+    font-weight: 500; letter-spacing: 3px;
+  }
+  .em-sidebar-logo small {
+    display: block; font-size: 9px; letter-spacing: 2px; color: var(--text-secondary);
+    font-family: 'Inter', sans-serif; margin-top: 2px;
+  }
+  .em-nav { list-style: none; }
+  .em-nav li { margin-bottom: 4px; }
+  .em-nav a {
+    display: flex; align-items: center; gap: 12px; padding: 12px 8px;
+    text-decoration: none; color: var(--text-secondary); font-size: 12px;
+    font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase;
+    border-left: 2px solid transparent; transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .em-nav a.active { color: var(--accent); border-left-color: var(--accent); }
+  .em-nav a:hover { color: var(--text-primary); }
+  .em-nav-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; }
+  .em-sidebar-footer { margin-top: auto; padding-top: 24px; border-top: 1px solid var(--border); }
+  .em-sidebar-email { font-size: 12px; color: var(--text-secondary); margin-bottom: 12px; }
+  .em-sidebar-logout {
+    display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--text-secondary);
+    background: none; border: none; cursor: pointer; font-family: inherit; transition: color 0.2s;
+  }
+  .em-sidebar-logout:hover { color: var(--text-primary); }
+
+  /* PUBLISH PAGE */
+  .em-publish { padding: 28px 24px 100px; }
+  .em-back {
+    display: inline-flex; align-items: center; gap: 8px; padding: 0;
+    font-size: 10px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--text-secondary); background: none; border: none; cursor: pointer;
+    margin-bottom: 20px; font-family: inherit; transition: color 0.2s;
+    white-space: nowrap;
+  }
+  .em-back:hover { color: var(--text-primary); }
+  .em-back svg { stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  .em-label { font-size: 10px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+  .em-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 28px; font-weight: 400; line-height: 1.2; margin-bottom: 8px; }
+  .em-subtitle { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 32px; }
+
+  /* Phone Mockup */
+  .em-phone-wrap { display: flex; justify-content: center; margin-bottom: 32px; }
+  .em-phone {
+    width: 260px; border: 4px solid #4A524F; border-radius: 28px;
+    background: var(--preview-bg); position: relative; overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08); transition: transform 0.4s, box-shadow 0.4s;
+  }
+  .em-phone:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 28px 50px rgba(0,0,0,0.12); }
+  .em-phone-inner {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 40px 20px; text-align: center;
+  }
+  .em-phone-theme { font-size: 8px; font-weight: 500; letter-spacing: 2.5px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 16px; }
+  .em-phone-flower { font-size: 18px; margin-bottom: 12px; opacity: 0.6; }
+  .em-phone-sub { font-size: 11px; color: var(--text-secondary); font-style: italic; margin-bottom: 16px; letter-spacing: 0.5px; }
+  .em-phone-name { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 28px; font-weight: 400; line-height: 1.3; }
+  .em-phone-ampersand { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 16px; font-style: italic; color: var(--text-secondary); margin: 4px 0; }
+  .em-phone-line { width: 40px; height: 1px; background: var(--accent-light); margin: 14px auto; }
+  .em-phone-dash { font-size: 16px; color: var(--text-secondary); margin-bottom: 4px; }
+  .em-phone-loc { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 13px; font-style: italic; color: var(--text-secondary); margin-bottom: 12px; }
+  .em-phone-msg { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 10px; font-style: italic; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; max-width: 180px; }
+  .em-phone-rsvp { font-size: 8px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); }
+
+  /* Section Card */
+  .em-section {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 24px; margin-bottom: 16px;
+  }
+  .em-section-header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+  }
+  .em-section-title {
+    font-family: 'Cormorant Garamond', Georgia, serif; font-size: 20px; font-weight: 400;
+  }
+  .em-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 12px; background: #f0ebe4; color: var(--accent);
+    font-size: 10px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase;
+    border-radius: 4px;
+  }
+  .em-badge.draft { background: var(--border-light); color: var(--text-secondary); }
+  .em-section-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; }
+
+  /* Buttons */
+  .em-btn-dark {
+    background: var(--dark); color: #fff; border: none; padding: 14px 32px;
+    font-size: 10px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase;
+    cursor: pointer; font-family: inherit; transition: all 0.3s;
+  }
+  .em-btn-dark:hover { opacity: 0.92; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(28,36,33,0.2); }
+  .em-btn-outline {
+    background: transparent; border: 1px solid var(--border); color: var(--text-primary);
+    padding: 14px 32px; font-size: 10px; font-weight: 500; letter-spacing: 3px;
+    text-transform: uppercase; cursor: pointer; font-family: inherit;
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    width: 100%; margin-bottom: 20px; transition: all 0.3s;
+  }
+  .em-btn-outline:hover { border-color: var(--text-secondary); }
+  .em-btn-accent {
+    background: transparent; border: 1px solid var(--accent-light); color: var(--accent);
+    padding: 12px 24px; font-size: 10px; font-weight: 500; letter-spacing: 2px;
+    text-transform: uppercase; cursor: pointer; font-family: inherit;
+    display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s;
+  }
+  .em-btn-accent:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+  /* Link Row */
+  .em-link-row { display: flex; gap: 12px; margin-top: 12px; }
+  .em-link-row .em-btn-accent {
+    flex-shrink: 0;
+    width: auto;
+    min-width: 90px;
+    justify-content: center;
+    padding: 12px 16px;
+  }
+  .em-link-input {
+    flex: 1; background: #f5f5f5; border: 1px solid var(--border);
+    padding: 12px 16px; font-size: 13px; color: var(--text-secondary);
+    font-family: inherit; outline: none;
+  }
+
+  /* Text Link */
+  /* Calendar Box */
+  .em-calendar-box {
+    display: flex; gap: 16px; align-items: flex-start;
+    border: 1px solid var(--border); padding: 20px; border-radius: 10px;
+  }
+  .em-calendar-icon { color: var(--accent); flex-shrink: 0; }
+  .em-calendar-title { font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+  .em-calendar-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  /* Description Form */
+  .em-desc-label {
+    display: block; font-size: 9px; font-weight: 500; letter-spacing: 2.5px;
+    text-transform: uppercase; color: var(--text-secondary); margin-bottom: 8px;
+  }
+  .em-desc-textarea {
+    width: 100%; background: var(--preview-bg); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px; font-size: 13px; color: var(--text-primary);
+    font-family: 'Inter', sans-serif; outline: none; resize: vertical; min-height: 180px;
+    line-height: 1.7; margin-bottom: 12px;
+  }
+  .em-desc-textarea:focus { border-color: var(--accent-light); }
+  .em-desc-actions {
+    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+  }
+  .em-ai-box {
+    border: 1px solid var(--accent-light); padding: 10px 14px; display: inline-flex; align-items: center; gap: 8px;
+    cursor: pointer; background: transparent; font-family: inherit; transition: all 0.3s; border-radius: 8px;
+  }
+  .em-ai-box:hover { border-color: var(--accent); background: rgba(184,149,106,0.04); transform: translateX(2px); }
+  .em-ai-icon-wrap { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; }
+  .em-ai-icon-wrap svg { width: 14px; height: 14px; stroke: var(--accent); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .em-ai-text { font-size: 10px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); }
+
+  /* AI Modal */
+  .em-modal-overlay {
+    position: absolute; inset: 0; background: rgba(0,0,0,0.2);
+    opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 110;
+    display: flex; align-items: flex-end; justify-content: center;
+  }
+  .em-modal-overlay.open { opacity: 1; pointer-events: auto; }
+  .em-modal {
+    background: var(--surface); width: 100%; max-height: 80vh;
+    border-radius: 20px 20px 0 0; padding: 24px;
+    transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow-y: auto;
+  }
+  .em-modal-overlay.open .em-modal { transform: translateY(0); }
+  .em-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .em-modal-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 22px; font-weight: 400; }
+  .em-modal-close { background: none; border: none; font-size: 24px; color: var(--text-secondary); cursor: pointer; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
+
+  /* AI Tabs */
+  .em-ai-tabs {
+    display: flex; gap: 6px; margin-bottom: 20px; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px;
+  }
+  .em-ai-tabs::-webkit-scrollbar { display: none; }
+  .em-ai-tab {
+    flex: 1; min-width: 60px; padding: 8px 10px; border: 1px solid var(--border); background: transparent;
+    color: var(--text-secondary); font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 500;
+    letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; border-radius: 8px;
+    transition: all 0.3s; white-space: nowrap;
+  }
+  .em-ai-tab:hover { border-color: var(--accent-light); color: var(--text-primary); }
+  .em-ai-tab.active { border-color: var(--accent); background: rgba(184,149,106,0.08); color: var(--accent); }
+  .em-ai-religion-content { display: none; animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+  .em-ai-religion-content.active { display: block !important; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .em-ai-section { margin-bottom: 24px; }
+  .em-ai-section-title { font-size: 10px; font-weight: 500; letter-spacing: 2.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  .em-ai-option {
+    border: 1px solid var(--border); padding: 14px 16px; border-radius: 10px; margin-bottom: 8px;
+    cursor: pointer; transition: all 0.3s; background: transparent; width: 100%; text-align: left; font-family: inherit;
+  }
+  .em-ai-option:hover { border-color: var(--accent-light); background: rgba(184,149,106,0.04); }
+  .em-ai-option-msg { font-family: 'Inter', sans-serif; font-size: 12px; color: var(--text-primary); line-height: 1.7; margin-bottom: 6px; white-space: pre-line; }
+  .em-ai-option-tag { font-size: 9px; color: var(--accent); letter-spacing: 1px; text-transform: uppercase; font-weight: 500; }
+
+  /* Bottom Navigation Bar */
+  .em-bottom-nav {
+    position: fixed;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 32px);
+    max-width: 380px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px) saturate(1.2);
+    -webkit-backdrop-filter: blur(20px) saturate(1.2);
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 20px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 8px 6px 8px;
+    z-index: 100;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .em-bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 4px 6px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    color: var(--text-secondary);
+    position: relative;
+    flex: 1;
+    border-radius: 12px;
+    text-decoration: none;
+  }
+  .em-bottom-nav-item:hover {
+    color: var(--accent);
+    background: rgba(184,149,106,0.06);
+  }
+  .em-bottom-nav-item.active {
+    color: var(--accent);
+  }
+  .em-bottom-nav-item svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .em-bottom-nav-item:hover svg {
+    transform: scale(1.08);
+  }
+  .em-bottom-nav-label {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    text-transform: capitalize;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* Toast */
+  .em-toast {
+    position: fixed; bottom: 80px; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--dark); color: #fff; padding: 14px 28px; border-radius: 8px;
+    font-size: 12px; font-weight: 500; letter-spacing: 0.5px; z-index: 200; opacity: 0;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none; white-space: nowrap;
+  }
+  .em-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  
+  /* Social Share Buttons */
+  .em-share-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .em-share-btn {
+    border: none;
+    padding: 14px 12px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    color: #fff;
+  }
+  .em-share-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+  }
+  .em-share-btn:active {
+    transform: translateY(0);
+  }
+  .em-share-wa { background: #25D366; }
+  .em-share-wa:hover { box-shadow: 0 6px 16px rgba(37,211,102,0.3); }
+  .em-share-tele { background: #0088cc; }
+  .em-share-tele:hover { box-shadow: 0 6px 16px rgba(0,136,204,0.3); }
+  .em-share-fb { background: #1877F2; }
+  .em-share-fb:hover { box-shadow: 0 6px 16px rgba(24,119,242,0.3); }
+  .em-share-x { background: #000; }
+  .em-share-x:hover { box-shadow: 0 6px 16px rgba(0,0,0,0.2); }
+  .em-share-email { background: #EA4335; }
+  .em-share-email:hover { box-shadow: 0 6px 16px rgba(234,67,53,0.3); }
+  .em-share-copy {
+    background: var(--dark);
+    color: #fff;
+  }
+  .em-share-copy:hover { box-shadow: 0 6px 16px rgba(28,36,33,0.25); }
+
+@media (max-width: 480px) {
+    body { background: var(--bg); }
+    .em-widget { border-radius: 0; border: none; box-shadow: none; max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<svg style="display:none">
+  <defs>
+    <symbol id="icon-home" viewBox="0 0 24 24">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+      <polyline points="9 22 9 12 15 12 15 22"/>
+    </symbol>
+    <symbol id="icon-dashboard" viewBox="0 0 24 24">
+      <rect x="3" y="3" width="7" height="7"/>
+      <rect x="14" y="3" width="7" height="7"/>
+      <rect x="14" y="14" width="7" height="7"/>
+      <rect x="3" y="14" width="7" height="7"/>
+    </symbol>
+    <symbol id="icon-plus-circle" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="8" x2="12" y2="16"/>
+      <line x1="8" y1="12" x2="16" y2="12"/>
+    </symbol>
+    <symbol id="icon-users" viewBox="0 0 24 24">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+      <circle cx="9" cy="7" r="4"/>
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+    </symbol>
+    <symbol id="icon-logout" viewBox="0 0 24 24">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+      <polyline points="16 17 21 12 16 7"/>
+      <line x1="21" y1="12" x2="9" y2="12"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="em-widget" id="emWidget">
+  <div class="em-header" id="emHeader">
+    <button class="em-menu-btn" id="menuBtn" onclick="toggleSidebar()">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="em-logo" onclick="location.href='dashboard.html'">E · M</div>
+  </div>
+
+  <div class="em-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+  <div class="em-sidebar" id="sidebar">
+    <div class="em-sidebar-header">
+      <a href="index.html" style="text-decoration:none;color:inherit;">
+        <div class="em-sidebar-logo">E · M <small>ATELIER</small></div>
+      </a>
+    </div>
+    <ul class="em-nav">
+      <li><a href="index.html" data-view="home"><span class="em-nav-icon"><svg width="18" height="18"><use href="#icon-home"/></svg></span>Beranda</a></li>
+      <li><a href="dashboard.html" data-view="dashboard"><span class="em-nav-icon"><svg width="18" height="18"><use href="#icon-dashboard"/></svg></span>Dasbor</a></li>
+      <li><a href="dashboard.html" data-view="atelier" onclick="localStorage.setItem('em_goto_atelier','1'); toggleSidebar(); return false;"><span class="em-nav-icon"><svg width="18" height="18"><use href="#icon-plus-circle"/></svg></span>Buat Undangan</a></li>
+      <li><a href="dashboard.html" data-view="guestlist" onclick="localStorage.setItem('em_goto_guestlist','1'); toggleSidebar(); return false;"><span class="em-nav-icon"><svg width="18" height="18"><use href="#icon-users"/></svg></span>Daftar Tamu</a></li>
+    </ul>
+    <div class="em-sidebar-footer">
+      <div class="em-sidebar-email" id="sidebarEmail">codereli37@gmail.com</div>
+      <button class="em-sidebar-logout" onclick="logout()"><svg width="16" height="16"><use href="#icon-logout"/></svg>Keluar</button>
+    </div>
+  </div>
+
+  <div class="em-toast" id="toast"></div>
+
+  <!-- AI Description Modal -->
+  <div class="em-modal-overlay" id="aiDescModal" onclick="closeAiDescModal(event)">
+    <div class="em-modal" onclick="event.stopPropagation()">
+      <div class="em-modal-header">
+        <div class="em-modal-title">Rekomendasi AI</div>
+        <button class="em-modal-close" onclick="closeAiDescModal()">&times;</button>
+      </div>
+      <div class="em-ai-tabs">
+        <button class="em-ai-tab active" data-religion="islam" onclick="switchDescTab('islam')">Islam</button>
+        <button class="em-ai-tab" data-religion="kristen" onclick="switchDescTab('kristen')">Kristen</button>
+        <button class="em-ai-tab" data-religion="hindu" onclick="switchDescTab('hindu')">Hindu</button>
+        <button class="em-ai-tab" data-religion="buddha" onclick="switchDescTab('buddha')">Buddha</button>
+        <button class="em-ai-tab" data-religion="netral" onclick="switchDescTab('netral')">Umum</button>
+      </div>
+
+      <!-- ISLAM -->
+      <div class="em-ai-religion-content active" id="desc-islam">
+        <div class="em-ai-section">
+          <div class="em-ai-section-title">Contoh Deskripsi Islam</div>
+          <button class="em-ai-option" onclick="applyDesc(0)">
+            <div class="em-ai-option-msg">Assalamu'alaikum Warahmatullahi Wabarakatuh
+
+Yth. [NAMA TAMU]
+Di Tempat
+
+Dengan segala kerendahan hati, kami mengundang Bapak/Ibu/Saudara/i dan teman-teman untuk menghadiri acara,
+
+===========
+The Wedding of [MEMPELAI WANITA] & [MEMPELAI PRIA]
+===========
+
+Pada: Akad Nikah
+🗓️ Tanggal: [TANGGAL AKAD]
+🕛 Pukul: [WAKTU AKAD]
+📍 Lokasi: [LOKASI AKAD]
+
+Pada: Resepsi
+🗓️ Tanggal: [TANGGAL RESEPSI]
+🕛 Pukul: [WAKTU RESEPSI]
+📍 Lokasi: [LOKASI RESEPSI]
+
+Link undangan bisa diakses lengkap di:
+[LINK UNDANGAN]
+
+Merupakan suatu kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan untuk hadir dan memberikan doa restu.
+Mohon maaf perihal undangan hanya di bagikan melalui pesan ini.
+
+Wassalamu'alaikum Warahmatullahi Wabarakatuh
+
+Note:
+Untuk mendapatkan hasil yang bagus, harap buka melalui Google Chrome terupdate dan matikan mode gelap dari HP.</div>
+            <div class="em-ai-option-tag">Formal & Khidmat</div>
+          </button>
+          <button class="em-ai-option" onclick="applyDesc(1)">
+            <div class="em-ai-option-msg">Bismillahirrahmanirrahim
+
+Yth. [NAMA TAMU]
+
+Dengan memohon ridho dan rahmat Allah SWT, izinkan kami mengundang Bapak/Ibu/Saudara/i untuk turut menyaksikan dan mendoakan pernikahan kami:
+
+✨ [MEMPELAI WANITA] & [MEMPELAI PRIA] ✨
+
+📅 Akad Nikah
+Hari/Tanggal: [HARI], [TANGGAL AKAD]
+Waktu: [WAKTU AKAD]
+Tempat: [LOKASI AKAD]
+
+🎉 Resepsi
+Hari/Tanggal: [HARI], [TANGGAL RESEPSI]
+Waktu: [WAKTU RESEPSI]
+Tempat: [LOKASI RESEPSI]
+
+Lihat undangan lengkap di:
+[LINK UNDANGAN]
+
+Kehadiran dan doa restu Anda sangat kami harapkan. Barakallahu laka wa baraka alaikuma wa jama'a bainakuma fi khair.
+
+Terima kasih banyak atas perhatiannya.
+
+Note: Buka link menggunakan Chrome/Safari terupdate dan matikan dark mode untuk tampilan terbaik.</div>
+            <div class="em-ai-option-tag">Syukur & Hangat</div>
+          </button>
+          <button class="em-ai-option" onclick="applyDesc(2)">
+            <div class="em-ai-option-msg">Assalamu'alaikum
+
+Kepada Yth.
+[NAMA TAMU]
+
+Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i untuk hadir dalam acara pernikahan putra-putri kami:
+
+💍 [MEMPELAI WANITA] & [MEMPELAI PRIA] 💍
+
+🕌 Akad Nikah
+🗓️ [TANGGAL AKAD]
+⏰ [WAKTU AKAD]
+📍 [LOKASI AKAD]
+
+🎊 Resepsi Pernikahan
+🗓️ [TANGGAL RESEPSI]
+⏰ [WAKTU RESEPSI]
+📍 [LOKASI RESEPSI]
+
+Undangan lengkap:
+[LINK UNDANGAN]
+
+Semoga Allah SWT senantiasa memberkahi langkah kami. Aamiin.
+Mohon maaf atas ketidaknyamanan undangan digital ini.
+
+Wassalamu'alaikum
+
+Tips: Gunakan browser terupdate dan nonaktifkan dark mode untuk pengalaman terbaik.</div>
+            <div class="em-ai-option-tag">Sederhana & Ikhlas</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- KRISTEN -->
+      <div class="em-ai-religion-content" id="desc-kristen">
+        <div class="em-ai-section">
+          <div class="em-ai-section-title">Contoh Deskripsi Kristen</div>
+          <button class="em-ai-option" onclick="applyDesc(3)">
+            <div class="em-ai-option-msg">Shalom,
+
+Yth. [NAMA TAMU]
+Di Tempat
+
+Dalam kasih Tuhan Yesus Kristus, dengan penuh sukacita kami mengundang Bapak/Ibu/Saudara/i untuk hadir dalam perayaan pernikahan kami:
+
+===========
+The Wedding of [MEMPELAI WANITA] & [MEMPELAI PRIA]
+===========
+
+🕊️ Pemberkatan Nikah
+🗓️ Tanggal: [TANGGAL AKAD]
+🕛 Pukul: [WAKTU AKAD]
+📍 Lokasi: [LOKASI AKAD]
+
+🎉 Resepsi
+🗓️ Tanggal: [TANGGAL RESEPSI]
+🕛 Pukul: [WAKTU RESEPSI]
+📍 Lokasi: [LOKASI RESEPSI]
+
+Lihat undangan lengkap:
+[LINK UNDANGAN]
+
+Kehadiran dan doa Anda adalah berkat yang sangat kami harapkan. Kiranya kasih karunia Tuhan Yesus Kristus menyertai kita semua.
+
+Terima kasih atas perhatiannya.
+
+Note: Harap buka link menggunakan browser terupdate dan matikan dark mode.</div>
+            <div class="em-ai-option-tag">Kasih & Syukur</div>
+          </button>
+          <button class="em-ai-option" onclick="applyDesc(4)">
+            <div class="em-ai-option-msg">Dalam nama Tuhan Yesus yang penuh kasih,
+
+Yth. [NAMA TAMU]
+
+Dengan berkat dan anugerah Tuhan, kami dengan sukacita mengundang Anda untuk menjadi saksi cinta kasih Kristus dalam pernikahan kami:
+
+✨ [MEMPELAI WANITA] & [MEMPELAI PRIA] ✨
+
+📅 Ibadah Pemberkatan
+Hari/Tanggal: [HARI], [TANGGAL AKAD]
+Waktu: [WAKTU AKAD]
+Tempat: [LOKASI AKAD]
+
+🎊 Resepsi
+Hari/Tanggal: [HARI], [TANGGAL RESEPSI]
+Waktu: [WAKTU RESEPSI]
+Tempat: [LOKASI RESEPSI]
+
+Undangan digital lengkap:
+[LINK UNDANGAN]
+
+Mohon doa restu dan kehadirannya. Tuhan Yesus memberkati.
+
+Terima kasih.
+
+Note: Gunakan Chrome/Safari terupdate dan matikan mode gelap untuk tampilan optimal.</div>
+            <div class="em-ai-option-tag">Saksi Kasih</div>
+          </button>
+          <button class="em-ai-option" onclick="applyDesc(5)">
+            <div class="em-ai-option-msg">Shalom Bapak/Ibu/Saudara/i [NAMA TAMU]
+
+Dengan penuh syukur kepada Allah Bapa, kami ingin berbagi kebahagiaan dalam pernikahan kami:
+
+💒 [MEMPELAI WANITA] & [MEMPELAI PRIA] 💒
+
+🕊️ Pemberkatan
+🗓️ [TANGGAL AKAD]
+⏰ [WAKTU AKAD]
+📍 [LOKASI AKAD]
+
+🎉 Resepsi
+🗓️ [TANGGAL RESEPSI]
+⏰ [WAKTU RESEPSI]
+📍 [LOKASI RESEPSI]
+
+Lihat undangan kami di:
+[LINK UNDANGAN]
+
+Segala kemuliaan hanya bagi Allah di surga. Terima kasih atas doa dan kehadiran Anda.
+Mohon maaf undangan hanya melalui pesan digital.
+
+Tuhan memberkati.
+
+Tips: Buka dengan browser terupdate, nonaktifkan dark mode.</div>
+            <div class="em-ai-option-tag">Kemuliaan Bagi Allah</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- HINDU -->
+      <div class="em-ai-religion-content" id="desc-hindu">
+        <div class="em-ai-section">
+          <div class="em-ai-section-title">Contoh Deskripsi Hindu</div>
+          <button class="em-ai-option" onclick="applyDesc(6)">
+            <div class="em-ai-option-msg">Om Swastiastu
+
+Yth. [NAMA TAMU]
+Di Tempat
+
+Dengan rahmat Ida Sang Hyang Widhi Wasa (Tuhan Yang Maha Esa), kami bermaksud mengundang Bapak/Ibu/Saudara/i untuk hadir memberikan doa restu dalam upacara pernikahan putra-putri kami:
+
+===========
+The Wedding of [MEMPELAI WANITA] & [MEMPELAI PRIA]
+===========
+
+🙏 Upacara Pawiwahan
+🗓️ Tanggal: [TANGGAL AKAD]
+🕛 Pukul: [WAKTU AKAD]
+📍 Lokasi: [LOKASI AKAD]
+
+🎉 Resepsi
+🗓️ Tanggal: [TANGGAL RESEPSI]
+🕛 Pukul: [WAKTU RESEPSI]
+📍 Lokasi: [LOKASI RESEPSI]
+
+Undangan lengkap:
+[LINK UNDANGAN]
+
+Merupakan kehormatan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir. Om Shanti Shanti Shanti Om.
+
+Terima kasih.
+
+Note: Harap buka link dengan browser terupdate dan matikan dark mode HP.</div>
+            <div class="em-ai-option-tag">Om Swastiastu</div>
+          </button>
+          <button class="em-ai-option" onclick="applyDesc(7)">
+            <div class="em-ai-option-msg">Om Swastiastu
+
+Kepada Yth.
+[NAMA TAMU]
+
+Atas karunia Tuhan Yang Maha Kuasa, kami dengan tulus mengundang Bapak/Ibu/Saudara/i untuk turut menyaksikan dan memberkati upacara pernikahan kami:
+
+✨ [MEMPELAI WANITA] & [MEMPELAI PRIA] ✨
+
+📅 Upacara Pawiwahan
+Hari/Tanggal: [HARI], [TANGGAL AKAD]
+Waktu: [WAKTU AKAD]
+Tempat: [LOKASI AKAD]
+
+🎊 Resepsi
+Hari/Tanggal: [HARI], [TANGGAL RESEPSI]
+Waktu: [WAKTU RESEPSI]
+Tempat: [LOKASI RESEPSI]
+
+Lihat undangan digital:
+[LINK UNDANGAN]
+
+Mohon doa restunya. Semoga kebahagiaan dan kedamaian selalu menyertai kita semua. Rahayu sagung dumadi.
+
+Terima kasih atas perhatiannya.
+
+Note: Gunakan Chrome/Safari terupdate dan matikan mode gelap.</div>
+            <div class="em-ai-option-tag">Karunia Tuhan</div>
+          </button>
+          <button class="em-ai-option" onclick="applyDesc(8)">
+            <div class="em-ai-option-msg">Om Swastiastu
+
+Yth. [NAMA TAMU]
+
+Dengan penuh sukacita dan kerendahan hati, kami memohon kehadiran Bapak/Ibu/Saudara/i dalam upacara suci pernikahan kami:
+
+💍 [MEMPELAI WANITA] & [MEMPELAI PRIA] 💍
+
+🙏 Pawiwahan
+🗓️ [TANGGAL AKAD]
+⏰ [WAKTU AKAD]
+📍 [LOKASI AKAD]
+
+🎉 Resepsi
+🗓️ [TANGGAL RESEPSI]
+⏰ [WAKTU RESEPSI]
+📍 [LOKASI RESEPSI]
+
+Undangan lengkap kami:
+[LINK UNDANGAN]
+
+Semoga Tuhan Yang Maha Esa senantiasa memberkati kita semua. Om Shanti.
+Mohon maaf undangan hanya melalui pesan ini.
+
+Terima kasih.
+
+Tips: Buka dengan browser terupdate, nonaktifkan dark mode.</div>
+            <div class="em-ai-option-tag">Sukacita & Kerendahan Hati</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- BUDDHA -->
+      <div class="em-ai-religion-content" id="desc-buddha">
+        <div class="em-ai-section">
+          <div class="em-ai-section-title">Contoh Deskripsi Buddha</div>
+          <button class="em-ai-option" onclick="applyDesc(9)">
+            <div class="em-ai-option-msg">Namo Buddhaya
+
+Yth. [NAMA TAMU]
+Di Tempat
+
+Dengan penuh kebahagiaan dan ketenangan batin, kami mengundang Bapak/Ibu/Saudara/i untuk turut serta dalam perayaan pernikahan kami:
+
+===========
+The Wedding of [MEMPELAI WANITA] & [MEMPELAI PRIA]
+===========
+
+🪷 Upacara Pernikahan
+🗓️ Tanggal: [TANGGAL AKAD]
+🕛 Pukul: [WAKTU AKAD]
+📍 Lokasi: [LOKASI AKAD]
+
+🎉 Resepsi
+🗓️ Tanggal: [TANGGAL RESEPSI]
+🕛 Pukul: [WAKTU RESEPSI]
+📍 Lokasi: [LOKASI RESEPSI]
+
+Lihat undangan lengkap di:
+[LINK UNDANGAN]
+
+Semoga kehadiran Anda membawa berkah. Semoga semua makhluk berbahagia. Sadhu Sadhu Sadhu.
+
+Terima kasih.
+
+Note: Harap buka link menggunakan browser terupdate dan matikan dark mode.</div>
+            <div class="em-ai-option-tag">Namo Buddhaya</div>
+          </button>
+          <button class="em-ai-option" onclick="applyDesc(10)">
+            <div class="em-ai-option-msg">Sadhu Sadhu Sadhu
+
+Yth. [NAMA TAMU]
+
+Dengan berkat Sang Buddha, Dhamma, dan Sangha, kami dengan sukacita mengundang Bapak/Ibu/Saudara/i untuk hadir dan memberkati pernikahan kami:
+
+✨ [MEMPELAI WANITA] & [MEMPELAI PRIA] ✨
+
+📅 Upacara Pernikahan
+Hari/Tanggal: [HARI], [TANGGAL AKAD]
+Waktu: [WAKTU AKAD]
+Tempat: [LOKASI AKAD]
+
+🎊 Resepsi
+Hari/Tanggal: [HARI], [TANGGAL RESEPSI]
+Waktu: [WAKTU RESEPSI]
+Tempat: [LOKASI RESEPSI]
+
+Undangan digital lengkap:
+[LINK UNDANGAN]
+
+Mohon doa restunya. Semoga kebijaksanaan dan kedamaian batin menyertai kita semua. Namo Buddhaya.
+
+Terima kasih atas perhatiannya.
+
+Note: Gunakan Chrome/Safari terupdate dan matikan mode gelap.</div>
+            <div class="em-ai-option-tag">Triple Gem</div>
+          </button>
+          <button class="em-ai-option" onclick="applyDesc(11)">
+            <div class="em-ai-option-msg">Namo Buddhaya
+
+Kepada Yth.
+[NAMA TAMU]
+
+Dengan penuh sukacita dan cinta kasih (metta), kami ingin berbagi kebahagiaan dalam pernikahan kami:
+
+💍 [MEMPELAI WANITA] & [MEMPELAI PRIA] 💍
+
+🪷 Upacara
+🗓️ [TANGGAL AKAD]
+⏰ [WAKTU AKAD]
+📍 [LOKASI AKAD]
+
+🎉 Resepsi
+🗓️ [TANGGAL RESEPSI]
+⏰ [WAKTU RESEPSI]
+📍 [LOKASI RESEPSI]
+
+Lihat undangan kami:
+[LINK UNDANGAN]
+
+Semoga kesejahteraan dan kebahagiaan melimpah dalam pernikahan kami. Semoga kita semua terbebas dari penderitaan. Sadhu.
+
+Mohon maaf undangan hanya melalui pesan digital.
+
+Terima kasih.
+
+Tips: Buka dengan browser terupdate, nonaktifkan dark mode.</div>
+            <div class="em-ai-option-tag">Metta & Sukacita</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- NETRAL / UMUM -->
+      <div class="em-ai-religion-content" id="desc-netral">
+        <div class="em-ai-section">
+          <div class="em-ai-section-title">Contoh Deskripsi Umum</div>
+          <button class="em-ai-option" onclick="applyDesc(12)">
+            <div class="em-ai-option-msg">Yth. [NAMA TAMU]
+Di Tempat
+
+Dengan penuh sukacita dan kehangatan, kami mengundang Anda untuk berbagi momen bahagia kami:
+
+===========
+The Wedding of [MEMPELAI WANITA] & [MEMPELAI PRIA]
+===========
+
+Pada: Akad Nikah
+🗓️ Tanggal: [TANGGAL AKAD]
+🕛 Pukul: [WAKTU AKAD]
+📍 Lokasi: [LOKASI AKAD]
+
+Pada: Resepsi
+🗓️ Tanggal: [TANGGAL RESEPSI]
+🕛 Pukul: [WAKTU RESEPSI]
+📍 Lokasi: [LOKASI RESEPSI]
+
+Link undangan bisa diakses lengkap di:
+[LINK UNDANGAN]
+
+Kehadiran Anda adalah hadiah terindah yang kami harapkan. Merupakan suatu kebahagiaan bagi kami apabila Anda berkenan untuk hadir di acara kami.
+Mohon maaf perihal undangan hanya di bagikan melalui pesan ini.
+Terima kasih banyak atas perhatiannya.
+
+Note:
+Untuk mendapatkan hasil yang bagus, harap buka melalui Google Chrome terupdate dan matikan mode gelap dari HP.</div>
+            <div class="em-ai-option-tag">Hangat & Universal</div>
+          </button>
+          <button class="em-ai-option" onclick="applyDesc(13)">
+            <div class="em-ai-option-msg">Halo [NAMA TAMU]! 👋
+
+Dua jiwa, satu cerita. Kami ingin Anda menjadi saksi awal perjalanan cinta kami! 💕
+
+✨ [MEMPELAI WANITA] & [MEMPELAI PRIA] ✨
+
+📅 Save The Date!
+
+💍 Akad Nikah
+Hari/Tanggal: [HARI], [TANGGAL AKAD]
+Waktu: [WAKTU AKAD]
+Tempat: [LOKASI AKAD]
+
+🎊 Resepsi
+Hari/Tanggal: [HARI], [TANGGAL RESEPSI]
+Waktu: [WAKTU RESEPSI]
+Tempat: [LOKASI RESEPSI]
+
+Lihat undangan lengkap kami di:
+[LINK UNDANGAN]
+
+Bersama keluarga dan sahabat tercinta, kami akan mengucapkan janji suci. Mohon doa restu Anda.
+
+Sampai jumpa di hari bahagia kami! 🥂
+
+Note: Buka link pakai Chrome/Safari terupdate ya, dan matikan dark mode untuk tampilan terbaik.</div>
+            <div class="em-ai-option-tag">Modern & Ceria</div>
+          </button>
+          <button class="em-ai-option" onclick="applyDesc(14)">
+            <div class="em-ai-option-msg">Kepada Yth.
+[NAMA TAMU]
+
+Tanpa mengurangi rasa hormat, izinkan kami mengundang Anda untuk hadir dalam hari spesial kami:
+
+💒 [MEMPELAI WANITA] & [MEMPELAI PRIA] 💒
+
+🗓️ Akad Nikah
+Tanggal: [TANGGAL AKAD]
+Pukul: [WAKTU AKAD]
+Lokasi: [LOKASI AKAD]
+
+🗓️ Resepsi Pernikahan
+Tanggal: [TANGGAL RESEPSI]
+Pukul: [WAKTU RESEPSI]
+Lokasi: [LOKASI RESEPSI]
+
+Undangan lengkap:
+[LINK UNDANGAN]
+
+Dari lubuk hati yang terdalam, kami mengucapkan terima kasih. Kehadiran Anda sangat berarti bagi kami.
+Mohon maaf undangan hanya melalui pesan digital ini.
+
+Dengan penuh cinta dan hormat,
+[MEMPELAI]
+
+Tips: Gunakan browser terupdate dan nonaktifkan dark mode.</div>
+            <div class="em-ai-option-tag">Romantis & Puitis</div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="em-content" id="emContent">
+    <div class="em-publish" id="viewPublish">
+      <button class="em-back" onclick="goBackToDashboard()">
+        <svg width="14" height="14" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Kembali ke Dasbor
+      </button>
+
+      
+      <div class="em-label">Terbitkan & Bagikan</div>
+      <h1 class="em-title" id="coupleName">Amara & Surya</h1>
+      <div class="em-subtitle">Kelola status publikasi dan bagikan undangan kepada tamu.</div>
+
+      <!-- Description Form -->
+      <div class="em-section">
+        <div class="em-section-header">
+          <div class="em-section-title">Deskripsi Pesan</div>
+        </div>
+        <div class="em-section-desc">Tulis pesan undangan yang akan dibagikan ke tamu via WhatsApp, SMS, atau media lainnya.</div>
+        <label class="em-desc-label">Isi Pesan</label>
+        <textarea class="em-desc-textarea" id="descTextarea" placeholder="Yth. [NAMA TAMU]
+Di Tempat
+
+Dengan segala kerendahan hati, kami mengundang..."></textarea>
+        <div class="em-desc-actions">
+          <button class="em-ai-box" onclick="openAiDescModal()">
+            <span class="em-ai-icon-wrap"><svg viewBox="0 0 24 24"><path d="M12 2L13.5 9.5L21 12L13.5 14.5L12 22L10.5 14.5L3 12L10.5 9.5Z"/></svg></span>
+            <span class="em-ai-text">Rekomendasi AI</span>
+          </button>
+          <button class="em-btn-accent" onclick="copyDescription()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <span id="copyDescText">Salin Pesan</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Nama Tamu -->
+      <div class="em-section">
+        <div class="em-section-header">
+          <div class="em-section-title">Nama Tamu</div>
+        </div>
+        <div class="em-section-desc">Masukkan nama tamu untuk personalisasi undangan. Nama ini akan muncul di cover dan halaman undangan.</div>
+        <div class="em-form-group" style="margin-bottom: 12px;">
+          <input type="text" class="em-link-input" id="guestNameInput" placeholder="Contoh: Bapak Ahmad & Ibu Siti" style="width: 100%; margin-bottom: 10px;" oninput="updateGuestName()">
+        </div>
+        <div class="em-link-row" style="align-items: stretch;">
+          <input type="text" class="em-link-input" id="guestUrlInput" value="" readonly style="min-width: 0; font-size: 11px;">
+          <button class="em-btn-accent" onclick="copyGuestUrl()" style="padding: 10px 14px; font-size: 9px; letter-spacing: 1.5px; white-space: nowrap; flex-shrink: 0;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <span id="copyGuestText">Salin</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Sebar ke Sosial Media -->
+      <div class="em-section">
+        <div class="em-section-header">
+          <div class="em-section-title">Sebar ke Sosial Media</div>
+        </div>
+        <div class="em-section-desc">Bagikan undangan langsung ke platform favorit Anda.</div>
+        <div class="em-share-grid">
+          <button class="em-share-btn em-share-wa" onclick="shareTo('whatsapp')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            WhatsApp
+          </button>
+          <button class="em-share-btn em-share-tele" onclick="shareTo('telegram')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+            Telegram
+          </button>
+          <button class="em-share-btn em-share-fb" onclick="shareTo('facebook')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Facebook
+          </button>
+          <button class="em-share-btn em-share-x" onclick="shareTo('x')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            X
+          </button>
+          <button class="em-share-btn em-share-email" onclick="shareTo('email')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.91 6.09 12 10.91l6.09-4.82 1.983-1.597C21.69 2.28 24 3.434 24 5.457z"/></svg>
+            Email
+          </button>
+          <button class="em-share-btn em-share-copy" onclick="shareTo('copy')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Salin Link
+          </button>
+        </div>
+      </div>
+
+</div>
+
+  <!-- Bottom Navigation Bar -->
+  <div class="em-bottom-nav" id="bottomNav">
+    <a href="dashboard.html" class="em-bottom-nav-item" onclick="goBackToDashboard(); return false;">
+      <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      <span class="em-bottom-nav-label">Menu</span>
+    </a>
+    <button class="em-bottom-nav-item" onclick="showToast('Pengaturan akan segera hadir')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span class="em-bottom-nav-label">Pengaturan</span>
+    </button>
+    <button class="em-bottom-nav-item" onclick="showToast('Pratinjau tidak tersedia')">
+      <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      <span class="em-bottom-nav-label">Pratinjau</span>
+    </button>
+    <button class="em-bottom-nav-item" onclick="showToast('Undangan sudah aktif')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <span class="em-bottom-nav-label">Aktivasi</span>
+    </button>
+    <a href="publish.html" class="em-bottom-nav-item active">
+      <svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+      <span class="em-bottom-nav-label">Sebar</span>
+    </a>
+  </div>
+</div>
+
+<script>
+  const STORAGE_KEY = 'em_invitations';
+  let currentStatus = 'published';
+
+  const DESC_TEMPLATES = [
+    `Assalamu'alaikum Warahmatullahi Wabarakatuh
+
+Yth. [NAMA TAMU]
+Di Tempat
+
+Dengan segala kerendahan hati, kami mengundang Bapak/Ibu/Saudara/i dan teman-teman untuk menghadiri acara,
+
+===========
+The Wedding of [MEMPELAI WANITA] & [MEMPELAI PRIA]
+===========
+
+Pada: Akad Nikah
+🗓️ Tanggal: [TANGGAL AKAD]
+🕛 Pukul: [WAKTU AKAD]
+📍 Lokasi: [LOKASI AKAD]
+
+Pada: Resepsi
+🗓️ Tanggal: [TANGGAL RESEPSI]
+🕛 Pukul: [WAKTU RESEPSI]
+📍 Lokasi: [LOKASI RESEPSI]
+
+Link undangan bisa diakses lengkap di:
+[LINK UNDANGAN]
+
+Merupakan suatu kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan untuk hadir dan memberikan doa restu.
+Mohon maaf perihal undangan hanya di bagikan melalui pesan ini.
+
+Wassalamu'alaikum Warahmatullahi Wabarakatuh
+
+Note:
+Untuk mendapatkan hasil yang bagus, harap buka melalui Google Chrome terupdate dan matikan mode gelap dari HP.`,
+
+    `Bismillahirrahmanirrahim
+
+Yth. [NAMA TAMU]
+
+Dengan memohon ridho dan rahmat Allah SWT, izinkan kami mengundang Bapak/Ibu/Saudara/i untuk turut menyaksikan dan mendoakan pernikahan kami:
+
+✨ [MEMPELAI WANITA] & [MEMPELAI PRIA] ✨
+
+📅 Akad Nikah
+Hari/Tanggal: [HARI], [TANGGAL AKAD]
+Waktu: [WAKTU AKAD]
+Tempat: [LOKASI AKAD]
+
+🎉 Resepsi
+Hari/Tanggal: [HARI], [TANGGAL RESEPSI]
+Waktu: [WAKTU RESEPSI]
+Tempat: [LOKASI RESEPSI]
+
+Lihat undangan lengkap di:
+[LINK UNDANGAN]
+
+Kehadiran dan doa restu Anda sangat kami harapkan. Barakallahu laka wa baraka alaikuma wa jama'a bainakuma fi khair.
+
+Terima kasih banyak atas perhatiannya.
+
+Note: Buka link menggunakan Chrome/Safari terupdate dan matikan dark mode untuk tampilan terbaik.`,
+
+    `Assalamu'alaikum
+
+Kepada Yth.
+[NAMA TAMU]
+
+Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i untuk hadir dalam acara pernikahan putra-putri kami:
+
+💍 [MEMPELAI WANITA] & [MEMPELAI PRIA] 💍
+
+🕌 Akad Nikah
+🗓️ [TANGGAL AKAD]
+⏰ [WAKTU AKAD]
+📍 [LOKASI AKAD]
+
+🎊 Resepsi Pernikahan
+🗓️ [TANGGAL RESEPSI]
+⏰ [WAKTU RESEPSI]
+📍 [LOKASI RESEPSI]
+
+Undangan lengkap:
+[LINK UNDANGAN]
+
+Semoga Allah SWT senantiasa memberkahi langkah kami. Aamiin.
+Mohon maaf atas ketidaknyamanan undangan digital ini.
+
+Wassalamu'alaikum
+
+Tips: Gunakan browser terupdate dan nonaktifkan dark mode untuk pengalaman terbaik.`,
+
+    `Shalom,
+
+Yth. [NAMA TAMU]
+Di Tempat
+
+Dalam kasih Tuhan Yesus Kristus, dengan penuh sukacita kami mengundang Bapak/Ibu/Saudara/i untuk hadir dalam perayaan pernikahan kami:
+
+===========
+The Wedding of [MEMPELAI WANITA] & [MEMPELAI PRIA]
+===========
+
+🕊️ Pemberkatan Nikah
+🗓️ Tanggal: [TANGGAL AKAD]
+🕛 Pukul: [WAKTU AKAD]
+📍 Lokasi: [LOKASI AKAD]
+
+🎉 Resepsi
+🗓️ Tanggal: [TANGGAL RESEPSI]
+🕛 Pukul: [WAKTU RESEPSI]
+📍 Lokasi: [LOKASI RESEPSI]
+
+Lihat undangan lengkap:
+[LINK UNDANGAN]
+
+Kehadiran dan doa Anda adalah berkat yang sangat kami harapkan. Kiranya kasih karunia Tuhan Yesus Kristus menyertai kita semua.
+
+Terima kasih atas perhatiannya.
+
+Note: Harap buka link menggunakan browser terupdate dan matikan dark mode.`,
+
+    `Dalam nama Tuhan Yesus yang penuh kasih,
+
+Yth. [NAMA TAMU]
+
+Dengan berkat dan anugerah Tuhan, kami dengan sukacita mengundang Anda untuk menjadi saksi cinta kasih Kristus dalam pernikahan kami:
+
+✨ [MEMPELAI WANITA] & [MEMPELAI PRIA] ✨
+
+📅 Ibadah Pemberkatan
+Hari/Tanggal: [HARI], [TANGGAL AKAD]
+Waktu: [WAKTU AKAD]
+Tempat: [LOKASI AKAD]
+
+🎊 Resepsi
+Hari/Tanggal: [HARI], [TANGGAL RESEPSI]
+Waktu: [WAKTU RESEPSI]
+Tempat: [LOKASI RESEPSI]
+
+Undangan digital lengkap:
+[LINK UNDANGAN]
+
+Mohon doa restu dan kehadirannya. Tuhan Yesus memberkati.
+
+Terima kasih.
+
+Note: Gunakan Chrome/Safari terupdate dan matikan mode gelap untuk tampilan optimal.`,
+
+    `Shalom Bapak/Ibu/Saudara/i [NAMA TAMU]
+
+Dengan penuh syukur kepada Allah Bapa, kami ingin berbagi kebahagiaan dalam pernikahan kami:
+
+💒 [MEMPELAI WANITA] & [MEMPELAI PRIA] 💒
+
+🕊️ Pemberkatan
+🗓️ [TANGGAL AKAD]
+⏰ [WAKTU AKAD]
+📍 [LOKASI AKAD]
+
+🎉 Resepsi
+🗓️ [TANGGAL RESEPSI]
+⏰ [WAKTU RESEPSI]
+📍 [LOKASI RESEPSI]
+
+Lihat undangan kami di:
+[LINK UNDANGAN]
+
+Segala kemuliaan hanya bagi Allah di surga. Terima kasih atas doa dan kehadiran Anda.
+Mohon maaf undangan hanya melalui pesan digital.
+
+Tuhan memberkati.
+
+Tips: Buka dengan browser terupdate, nonaktifkan dark mode.`,
+
+    `Om Swastiastu
+
+Yth. [NAMA TAMU]
+Di Tempat
+
+Dengan rahmat Ida Sang Hyang Widhi Wasa (Tuhan Yang Maha Esa), kami bermaksud mengundang Bapak/Ibu/Saudara/i untuk hadir memberikan doa restu dalam upacara pernikahan putra-putri kami:
+
+===========
+The Wedding of [MEMPELAI WANITA] & [MEMPELAI PRIA]
+===========
+
+🙏 Upacara Pawiwahan
+🗓️ Tanggal: [TANGGAL AKAD]
+🕛 Pukul: [WAKTU AKAD]
+📍 Lokasi: [LOKASI AKAD]
+
+🎉 Resepsi
+🗓️ Tanggal: [TANGGAL RESEPSI]
+🕛 Pukul: [WAKTU RESEPSI]
+📍 Lokasi: [LOKASI RESEPSI]
+
+Undangan lengkap:
+[LINK UNDANGAN]
+
+Merupakan kehormatan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir. Om Shanti Shanti Shanti Om.
+
+Terima kasih.
+
+Note: Harap buka link dengan browser terupdate dan matikan dark mode HP.`,
+
+    `Om Swastiastu
+
+Kepada Yth.
+[NAMA TAMU]
+
+Atas karunia Tuhan Yang Maha Kuasa, kami dengan tulus mengundang Bapak/Ibu/Saudara/i untuk turut menyaksikan dan memberkati upacara pernikahan kami:
+
+✨ [MEMPELAI WANITA] & [MEMPELAI PRIA] ✨
+
+📅 Upacara Pawiwahan
+Hari/Tanggal: [HARI], [TANGGAL AKAD]
+Waktu: [WAKTU AKAD]
+Tempat: [LOKASI AKAD]
+
+🎊 Resepsi
+Hari/Tanggal: [HARI], [TANGGAL RESEPSI]
+Waktu: [WAKTU RESEPSI]
+Tempat: [LOKASI RESEPSI]
+
+Lihat undangan digital:
+[LINK UNDANGAN]
+
+Mohon doa restunya. Semoga kebahagiaan dan kedamaian selalu menyertai kita semua. Rahayu sagung dumadi.
+
+Terima kasih atas perhatiannya.
+
+Note: Gunakan Chrome/Safari terupdate dan matikan mode gelap.`,
+
+    `Om Swastiastu
+
+Yth. [NAMA TAMU]
+
+Dengan penuh sukacita dan kerendahan hati, kami memohon kehadiran Bapak/Ibu/Saudara/i dalam upacara suci pernikahan kami:
+
+💍 [MEMPELAI WANITA] & [MEMPELAI PRIA] 💍
+
+🙏 Pawiwahan
+🗓️ [TANGGAL AKAD]
+⏰ [WAKTU AKAD]
+📍 [LOKASI AKAD]
+
+🎉 Resepsi
+🗓️ [TANGGAL RESEPSI]
+⏰ [WAKTU RESEPSI]
+📍 [LOKASI RESEPSI]
+
+Undangan lengkap kami:
+[LINK UNDANGAN]
+
+Semoga Tuhan Yang Maha Esa senantiasa memberkati kita semua. Om Shanti.
+Mohon maaf undangan hanya melalui pesan ini.
+
+Terima kasih.
+
+Tips: Buka dengan browser terupdate, nonaktifkan dark mode.`,
+
+    `Namo Buddhaya
+
+Yth. [NAMA TAMU]
+Di Tempat
+
+Dengan penuh kebahagiaan dan ketenangan batin, kami mengundang Bapak/Ibu/Saudara/i untuk turut serta dalam perayaan pernikahan kami:
+
+===========
+The Wedding of [MEMPELAI WANITA] & [MEMPELAI PRIA]
+===========
+
+🪷 Upacara Pernikahan
+🗓️ Tanggal: [TANGGAL AKAD]
+🕛 Pukul: [WAKTU AKAD]
+📍 Lokasi: [LOKASI AKAD]
+
+🎉 Resepsi
+🗓️ Tanggal: [TANGGAL RESEPSI]
+🕛 Pukul: [WAKTU RESEPSI]
+📍 Lokasi: [LOKASI RESEPSI]
+
+Lihat undangan lengkap di:
+[LINK UNDANGAN]
+
+Semoga kehadiran Anda membawa berkah. Semoga semua makhluk berbahagia. Sadhu Sadhu Sadhu.
+
+Terima kasih.
+
+Note: Harap buka link menggunakan browser terupdate dan matikan dark mode.`,
+
+    `Sadhu Sadhu Sadhu
+
+Yth. [NAMA TAMU]
+
+Dengan berkat Sang Buddha, Dhamma, dan Sangha, kami dengan sukacita mengundang Bapak/Ibu/Saudara/i untuk hadir dan memberkati pernikahan kami:
+
+✨ [MEMPELAI WANITA] & [MEMPELAI PRIA] ✨
+
+📅 Upacara Pernikahan
+Hari/Tanggal: [HARI], [TANGGAL AKAD]
+Waktu: [WAKTU AKAD]
+Tempat: [LOKASI AKAD]
+
+🎊 Resepsi
+Hari/Tanggal: [HARI], [TANGGAL RESEPSI]
+Waktu: [WAKTU RESEPSI]
+Tempat: [LOKASI RESEPSI]
+
+Undangan digital lengkap:
+[LINK UNDANGAN]
+
+Mohon doa restunya. Semoga kebijaksanaan dan kedamaian batin menyertai kita semua. Namo Buddhaya.
+
+Terima kasih atas perhatiannya.
+
+Note: Gunakan Chrome/Safari terupdate dan matikan mode gelap.`,
+
+    `Namo Buddhaya
+
+Kepada Yth.
+[NAMA TAMU]
+
+Dengan penuh sukacita dan cinta kasih (metta), kami ingin berbagi kebahagiaan dalam pernikahan kami:
+
+💍 [MEMPELAI WANITA] & [MEMPELAI PRIA] 💍
+
+🪷 Upacara
+🗓️ [TANGGAL AKAD]
+⏰ [WAKTU AKAD]
+📍 [LOKASI AKAD]
+
+🎉 Resepsi
+🗓️ [TANGGAL RESEPSI]
+⏰ [WAKTU RESEPSI]
+📍 [LOKASI RESEPSI]
+
+Lihat undangan kami:
+[LINK UNDANGAN]
+
+Semoga kesejahteraan dan kebahagiaan melimpah dalam pernikahan kami. Semoga kita semua terbebas dari penderitaan. Sadhu.
+
+Mohon maaf undangan hanya melalui pesan digital.
+
+Terima kasih.
+
+Tips: Buka dengan browser terupdate, nonaktifkan dark mode.`,
+
+    `Yth. [NAMA TAMU]
+Di Tempat
+
+Dengan penuh sukacita dan kehangatan, kami mengundang Anda untuk berbagi momen bahagia kami:
+
+===========
+The Wedding of [MEMPELAI WANITA] & [MEMPELAI PRIA]
+===========
+
+Pada: Akad Nikah
+🗓️ Tanggal: [TANGGAL AKAD]
+🕛 Pukul: [WAKTU AKAD]
+📍 Lokasi: [LOKASI AKAD]
+
+Pada: Resepsi
+🗓️ Tanggal: [TANGGAL RESEPSI]
+🕛 Pukul: [WAKTU RESEPSI]
+📍 Lokasi: [LOKASI RESEPSI]
+
+Link undangan bisa diakses lengkap di:
+[LINK UNDANGAN]
+
+Kehadiran Anda adalah hadiah terindah yang kami harapkan. Merupakan suatu kebahagiaan bagi kami apabila Anda berkenan untuk hadir di acara kami.
+Mohon maaf perihal undangan hanya di bagikan melalui pesan ini.
+Terima kasih banyak atas perhatiannya.
+
+Note:
+Untuk mendapatkan hasil yang bagus, harap buka melalui Google Chrome terupdate dan matikan mode gelap dari HP.`,
+
+    `Halo [NAMA TAMU]! 👋
+
+Dua jiwa, satu cerita. Kami ingin Anda menjadi saksi awal perjalanan cinta kami! 💕
+
+✨ [MEMPELAI WANITA] & [MEMPELAI PRIA] ✨
+
+📅 Save The Date!
+
+💍 Akad Nikah
+Hari/Tanggal: [HARI], [TANGGAL AKAD]
+Waktu: [WAKTU AKAD]
+Tempat: [LOKASI AKAD]
+
+🎊 Resepsi
+Hari/Tanggal: [HARI], [TANGGAL RESEPSI]
+Waktu: [WAKTU RESEPSI]
+Tempat: [LOKASI RESEPSI]
+
+Lihat undangan lengkap kami di:
+[LINK UNDANGAN]
+
+Bersama keluarga dan sahabat tercinta, kami akan mengucapkan janji suci. Mohon doa restu Anda.
+
+Sampai jumpa di hari bahagia kami! 🥂
+
+Note: Buka link pakai Chrome/Safari terupdate ya, dan matikan dark mode untuk tampilan terbaik.`,
+
+    `Kepada Yth.
+[NAMA TAMU]
+
+Tanpa mengurangi rasa hormat, izinkan kami mengundang Anda untuk hadir dalam hari spesial kami:
+
+💒 [MEMPELAI WANITA] & [MEMPELAI PRIA] 💒
+
+🗓️ Akad Nikah
+Tanggal: [TANGGAL AKAD]
+Pukul: [WAKTU AKAD]
+Lokasi: [LOKASI AKAD]
+
+🗓️ Resepsi Pernikahan
+Tanggal: [TANGGAL RESEPSI]
+Pukul: [WAKTU RESEPSI]
+Lokasi: [LOKASI RESEPSI]
+
+Undangan lengkap:
+[LINK UNDANGAN]
+
+Dari lubuk hati yang terdalam, kami mengucapkan terima kasih. Kehadiran Anda sangat berarti bagi kami.
+Mohon maaf undangan hanya melalui pesan digital ini.
+
+Dengan penuh cinta dan hormat,
+[MEMPELAI]
+
+Tips: Gunakan browser terupdate dan nonaktifkan dark mode.`
+  ];
+
+  function getInvitations() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch(e) { return []; }
+  }
+  function getInvitationUrl(inv) {
+    const baseUrl = window.location.origin + window.location.pathname.replace('publish.html', 'invitation.html');
+    return baseUrl + '?id=' + encodeURIComponent(inv.id);
+  }
+
+  function getInvitationUrlWithGuest(inv, guestName) {
+    const baseUrl = window.location.origin + window.location.pathname.replace('publish.html', 'invitation.html');
+    let url = baseUrl + '?id=' + encodeURIComponent(inv.id);
+    if (guestName && guestName.trim()) {
+      url += '&to=' + encodeURIComponent(guestName.trim());
+    }
+    return url;
+  }
+
+  function parseDescriptionTemplate(template, inv, guestName) {
+    const url = getInvitationUrlWithGuest(inv, guestName);
+    const brideName = inv.brideFull || inv.bride || 'Mempelai Wanita';
+    const groomName = inv.groomFull || inv.groom || 'Mempelai Pria';
+    const coupleName = inv.title || (groomName + ' & ' + brideName);
+
+    return template
+      .replace(/\[NAMA TAMU\]/g, guestName || 'Bapak/Ibu/Saudara/i')
+      .replace(/\[MEMPELAI WANITA\]/g, brideName)
+      .replace(/\[MEMPELAI PRIA\]/g, groomName)
+      .replace(/\[MEMPELAI\]/g, coupleName)
+      .replace(/\[TANGGAL AKAD\]/g, inv.akad?.date || '-')
+      .replace(/\[WAKTU AKAD\]/g, (inv.akad?.start || '-') + ' - ' + (inv.akad?.end || '-') + ' WIB')
+      .replace(/\[LOKASI AKAD\]/g, inv.akad?.locName || '-')
+      .replace(/\[TANGGAL RESEPSI\]/g, inv.resepsi?.date || '-')
+      .replace(/\[WAKTU RESEPSI\]/g, (inv.resepsi?.start || '-') + ' - ' + (inv.resepsi?.end || '-') + ' WIB')
+      .replace(/\[LOKASI RESEPSI\]/g, inv.resepsi?.locName || '-')
+      .replace(/\[HARI\]/g, '')
+      .replace(/\[LINK UNDANGAN\]/g, url)
+      // Safety: remove any double WIB that might occur from template + replacement
+      .replace(/WIB WIB/g, 'WIB')
+      .replace(/WIB  WIB/g, 'WIB');
+  }
+
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('open');
+    document.getElementById('menuBtn').classList.toggle('active');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  function toggleStatus() {
+    const btn = document.getElementById('statusBtn');
+    const badge = document.getElementById('statusBadge');
+    const desc = document.getElementById('statusDesc');
+
+    if (currentStatus === 'published') {
+      currentStatus = 'draft';
+      btn.textContent = 'TERBITKAN';
+      btn.style.background = 'var(--accent)';
+      badge.innerHTML = 'DRAF';
+      badge.classList.add('draft');
+      badge.style.background = '#e8e8e8';
+      badge.style.color = '#888';
+      desc.textContent = 'Undangan disembunyikan & tidak dapat diakses tamu.';
+      showToast('Undangan dijadikan draf');
+    } else {
+      currentStatus = 'published';
+      btn.textContent = 'JADIKAN DRAF';
+      btn.style.background = 'var(--dark)';
+      badge.classList.remove('draft');
+      badge.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> TERBIT`;
+      badge.style.background = '#f0ebe4';
+      badge.style.color = 'var(--accent)';
+      desc.textContent = 'Undangan aktif & dapat diakses tamu.';
+      showToast('Undangan diterbitkan');
+    }
+  }
+
+  function copyLink() {
+    const input = document.getElementById('linkInput');
+    const btnText = document.getElementById('copyText');
+    const btn = document.getElementById('copyBtn');
+
+    input.select();
+    input.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(input.value).then(() => {
+      btnText.textContent = 'TERSALIN';
+      btn.style.borderColor = '#4a7c59';
+      btn.style.color = '#4a7c59';
+      showToast('Tautan disalin ke clipboard');
+      setTimeout(() => {
+        btnText.textContent = 'SALIN';
+        btn.style.borderColor = '';
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+
+  function copyDescription() {
+    const textarea = document.getElementById('descTextarea');
+    const btnText = document.getElementById('copyDescText');
+    const btn = btnText.parentElement;
+
+    textarea.select();
+    textarea.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(textarea.value).then(() => {
+      btnText.textContent = 'TERSALIN';
+      btn.style.borderColor = '#4a7c59';
+      btn.style.color = '#4a7c59';
+      showToast('Pesan disalin ke clipboard');
+      setTimeout(() => {
+        btnText.textContent = 'Salin Pesan';
+        btn.style.borderColor = '';
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+
+  function viewAsGuest() {
+    const invitations = getInvitations();
+    const currentId = localStorage.getItem('em_current_invitation');
+    let inv = null;
+    if (currentId) {
+      inv = invitations.find(i => i.id === currentId);
+    }
+    if (!inv && invitations.length > 0) {
+      inv = invitations[0];
+    }
+    const guestUrl = inv ? 'guest.html?id=' + inv.id : 'guest.html';
+    showToast('Membuka tampilan tamu...');
+    setTimeout(() => {
+      window.open(guestUrl, '_blank');
+    }, 400);
+  }
+
+  function logout() {
+    localStorage.removeItem('em_user');
+    window.location.href = 'auth.html';
+  }
+
+  function goToDashboardEdit() {
+    const invitations = getInvitations();
+    const currentId = localStorage.getItem('em_current_invitation');
+    let inv = null;
+    if (currentId) {
+      inv = invitations.find(i => i.id === currentId);
+    }
+    if (!inv && invitations.length > 0) {
+      inv = invitations[0];
+    }
+    if (inv) {
+      localStorage.setItem('em_goto_edit', inv.id);
+    }
+    window.location.href = 'dashboard.html';
+  }
+
+  // AI Description Modal
+  function openAiDescModal() {
+    document.getElementById('aiDescModal').classList.add('open');
+  }
+
+  function closeAiDescModal(e) {
+    if (e && e.target !== document.getElementById('aiDescModal')) return;
+    document.getElementById('aiDescModal').classList.remove('open');
+  }
+
+  function switchDescTab(religion) {
+    document.querySelectorAll('.em-ai-tab').forEach(tab => {
+      tab.classList.toggle('active', tab.dataset.religion === religion);
+    });
+    document.querySelectorAll('.em-ai-religion-content').forEach(content => {
+      content.classList.toggle('active', content.id === 'desc-' + religion);
+    });
+  }
+
+  function applyDesc(idx) {
+    const template = DESC_TEMPLATES[idx];
+    if (!template) return;
+    const inv = getCurrentInvitation();
+    const guestName = document.getElementById('guestNameInput').value.trim();
+    if (inv) {
+      document.getElementById('descTextarea').value = parseDescriptionTemplate(template, inv, guestName);
+    } else {
+      document.getElementById('descTextarea').value = template;
+    }
+    closeAiDescModal();
+    showToast('Deskripsi diterapkan. Sesuaikan nama tamu sebelum dibagikan.');
+  }
+
+  // Load data from most recent invitation or from dashboard navigation
+  function goBackToDashboard() {
+    const invitations = getInvitations();
+    const currentId = localStorage.getItem('em_current_invitation');
+    let inv = null;
+    if (currentId) {
+      inv = invitations.find(i => i.id === currentId);
+      localStorage.removeItem('em_current_invitation');
+    }
+    if (!inv && invitations.length > 0) {
+      inv = invitations[0];
+    }
+    if (inv) {
+      localStorage.setItem('em_goto_detail', inv.id);
+    }
+    window.location.href = 'dashboard.html';
+  }
+
+  // Global variable to store current invitation for sharing
+  let currentInvitationId = null;
+
+  function getCurrentInvitation() {
+    const invitations = getInvitations();
+    if (currentInvitationId) {
+      const found = invitations.find(i => i.id === currentInvitationId);
+      if (found) return found;
+    }
+    // Fallback: return first invitation if any
+    if (invitations.length > 0) return invitations[0];
+    return null;
+  }
+
+  function shareTo(platform) {
+    try {
+      const inv = getCurrentInvitation();
+      const coupleName = inv ? (inv.title || inv.bride + ' & ' + inv.groom) : document.getElementById('coupleName').textContent || 'Amara & Surya';
+      const url = inv ? getInvitationUrl(inv) : '';
+
+      // Ambil deskripsi dari textarea (sudah terisi otomatis dengan data & link)
+      const descEl = document.getElementById('descTextarea');
+      let shareText = '';
+      if (descEl && descEl.value.trim()) {
+        shareText = descEl.value.trim();
+      } else {
+        shareText = 'Undangan Pernikahan ' + coupleName;
+        if (url) shareText += '\n\n' + url;
+      }
+
+      // Extract URL from description text for platforms that need separate URL param
+      const urlMatch = shareText.match(/(https?:\/\/[^\s]+)/);
+      const extractedUrl = urlMatch ? urlMatch[1] : url;
+
+      // Clean text without URL for platforms that handle URL separately
+      let textOnly = shareText;
+      if (extractedUrl) {
+        textOnly = shareText.replace(extractedUrl, '').trim();
+        textOnly = textOnly.replace(/\n{3,}/g, '\n\n');
+      }
+
+      let shareUrl = '';
+      switch(platform) {
+        case 'whatsapp':
+          // Send full text with embedded URL so it appears at the correct position
+          shareUrl = 'https://wa.me/?text=' + encodeURIComponent(shareText);
+          break;
+        case 'telegram':
+          shareUrl = 'https://t.me/share/url?url=' + encodeURIComponent(extractedUrl || '') + '&text=' + encodeURIComponent(textOnly);
+          break;
+        case 'facebook':
+          shareUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(extractedUrl || '');
+          break;
+        case 'x':
+          shareUrl = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(textOnly) + '&url=' + encodeURIComponent(extractedUrl || '');
+          break;
+        case 'email':
+          shareUrl = 'mailto:?subject=' + encodeURIComponent('Undangan Pernikahan ' + coupleName) + '&body=' + encodeURIComponent(shareText);
+          break;
+        case 'copy':
+          navigator.clipboard.writeText(shareText).then(() => {
+            showToast('Pesan & tautan disalin ke clipboard');
+          }).catch(() => {
+            const ta = document.createElement('textarea');
+            ta.value = shareText;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            showToast('Pesan & tautan disalin ke clipboard');
+          });
+          return;
+      }
+
+      if (shareUrl) {
+        const newWindow = window.open(shareUrl, '_blank');
+        if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+          showToast('Popup diblokir. Silakan izinkan popup untuk situs ini.');
+        }
+      }
+    } catch (err) {
+      console.error('Share error:', err);
+      showToast('Gagal membuka share. Coba salin link manual.');
+    }
+  }
+
+  // ===== NAMA TAMU / PERSONALIZED URL =====
+  function updateGuestName() {
+    const guestName = document.getElementById('guestNameInput').value.trim();
+    const inv = getCurrentInvitation();
+    if (inv) {
+      const url = getInvitationUrlWithGuest(inv, guestName);
+      document.getElementById('guestUrlInput').value = url;
+    }
+  }
+
+  function copyGuestUrl() {
+    const input = document.getElementById('guestUrlInput');
+    const btnText = document.getElementById('copyGuestText');
+    const btn = btnText.parentElement;
+
+    input.select();
+    input.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(input.value).then(() => {
+      btnText.textContent = 'TERSALIN';
+      btn.style.borderColor = '#4a7c59';
+      btn.style.color = '#4a7c59';
+      showToast('Link personalisasi disalin');
+      setTimeout(() => {
+        btnText.textContent = 'Salin';
+        btn.style.borderColor = '';
+        btn.style.color = '';
+      }, 2000);
+    });
+  }
+
+  function loadInvitationData() {
+    const invitations = getInvitations();
+    const currentId = localStorage.getItem('em_current_invitation');
+    let inv = null;
+
+    if (currentId) {
+      inv = invitations.find(i => i.id === currentId);
+    }
+
+    if (!inv && invitations.length > 0) {
+      inv = invitations[0];
+    }
+
+    if (!inv) return;
+
+    // Store current ID for sharing functions before removing from storage
+    currentInvitationId = inv.id;
+
+    // ID already stored above
+
+    document.getElementById('coupleName').textContent = inv.title || (inv.bride + ' & ' + inv.groom);
+    document.getElementById('previewBride').textContent = inv.bride || 'Amara';
+    document.getElementById('previewGroom').textContent = inv.groom || 'Surya';
+    document.getElementById('previewLoc').textContent = inv.resepsi?.locName || inv.akad?.locName || inv.location || 'Villa Tuscany, Bali';
+    document.getElementById('previewMsg').textContent = inv.message || 'Dengan penuh sukacita, kami mengundang Anda untuk berbagi momen bahagia kami.';
+    document.getElementById('previewTheme').textContent = 'The ' + (inv.template || 'Botanical');
+
+    // Initialize guest URL input
+    const baseUrl = getInvitationUrlWithGuest(inv, '');
+    document.getElementById('guestUrlInput').value = baseUrl;
+
+    // Auto-fill description textarea with parsed template using actual invitation data
+    const defaultTemplate = DESC_TEMPLATES[0];
+    const filledDesc = parseDescriptionTemplate(defaultTemplate, inv, '');
+    document.getElementById('descTextarea').value = filledDesc;
+
+    currentStatus = inv.status || 'published';
+
+    // Clean up navigation flag after successful load
+    localStorage.removeItem('em_current_invitation');
+    if (currentStatus === 'draft') {
+      const btn = document.getElementById('statusBtn');
+      const badge = document.getElementById('statusBadge');
+      const desc = document.getElementById('statusDesc');
+      btn.textContent = 'TERBITKAN';
+      btn.style.background = 'var(--accent)';
+      badge.innerHTML = 'DRAF';
+      badge.classList.add('draft');
+      badge.style.background = '#e8e8e8';
+      badge.style.color = '#888';
+      desc.textContent = 'Undangan disembunyikan & tidak dapat diakses tamu.';
+    }
+  }
+
+  // Header scroll effect
+  const header = document.getElementById('emHeader');
+  const content = document.getElementById('emContent');
+  let ticking = false;
+  content.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        header.classList.toggle('scrolled', content.scrollTop > 20);
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+
+  // Init
+  const user = JSON.parse(localStorage.getItem('em_user') || '{}');
+  if (user.name) {
+    document.getElementById('sidebarEmail').textContent = user.email || 'codereli37@gmail.com';
+  }
+  loadInvitationData();
+</script>
+
+</body>
+</html>
